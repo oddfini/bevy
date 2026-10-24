@@ -24,6 +24,9 @@ except for recorded fixes and selected upstream changes.
 - Fork settings disable inherited upstream automation. Files stay intact for
   future updates. Keep only `Downstream maintenance` enabled unless a new workflow
   has a concrete purpose and its permissions, cost, and triggers were reviewed.
+- CI pins Ubuntu 24.04, Rust 1.99.1, and action commit SHAs. Change the OS, toolchain,
+  or lockfile deliberately and rerun the selected checks. Cache keys include the
+  OS label, Rust version, and lockfile hash.
 
 Branch protection requires a PR, an up-to-date passing status, and resolved review
 discussions. Apply it to administrators too. Disable force pushes and branch
