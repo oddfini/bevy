@@ -64,6 +64,8 @@ jobs:
             echo "engine=${FORCE_ENGINE:-false}" >> "$GITHUB_OUTPUT"
           elif [ -z "$COMPARISON" ] || [ "$COMPARISON" = 0000000000000000000000000000000000000000 ]; then
             echo 'engine=true' >> "$GITHUB_OUTPUT"
+          elif ! git diff --quiet "$COMPARISON" -- .github/workflows/downstream.yml tools/maintenance.py Cargo.toml Cargo.lock; then
+            echo 'engine=true' >> "$GITHUB_OUTPUT"
           else
             echo "engine=$(python3 tools/maintenance.py needs-engine "$COMPARISON")" >> "$GITHUB_OUTPUT"
           fi

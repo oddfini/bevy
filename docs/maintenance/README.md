@@ -18,7 +18,8 @@ except for recorded fixes and selected upstream changes.
   contents and dimensions. Sources changing during a run make that run fail.
 - `downstream-ready` is the branch protection status. The workflow runs Python
   guard regressions, Rust transition tests, source/evidence checks, and formatting.
-  Engine changes also run affected package tests and Clippy. Workflow dispatch can
+  Engine, dependency, and maintenance pipeline changes also run engine package
+  tests and Clippy. Workflow dispatch can
   request all recorded engine checks with `engine_tests=true`.
 - Fork settings disable inherited upstream automation. Files stay intact for
   future updates. Keep only `Downstream maintenance` enabled unless a new workflow

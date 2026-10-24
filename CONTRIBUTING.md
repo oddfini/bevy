@@ -69,8 +69,8 @@ real pointer input, and screenshot capture. It writes logs and a JSON receipt.
 `record` validates the receipt before copying the result and screenshot into docs.
 It rejects stale inputs, failed checks, skipped builds, and a mismatched screenshot.
 
-CI repeats the fast checks on Linux. It runs affected engine package checks when
-engine files change. Native macOS evidence remains a local run. Rendering, input,
+CI repeats the fast checks on Linux. Engine, dependency, and maintenance pipeline
+changes also run engine package checks. Native macOS evidence remains a local run. Rendering, input,
 and platform changes need their own relevant runtime checks. This counter example
 does not establish Teratorn, mobile, performance, or whole-engine compatibility.
 
