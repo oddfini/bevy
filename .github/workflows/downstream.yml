@@ -1,0 +1,117 @@
+name: Downstream maintenance
+
+on:
+  pull_request:
+    branches: [codex/teratorn-ai]
+  push:
+    branches: [codex/teratorn-ai]
+  workflow_dispatch:
+    inputs:
+      engine_tests:
+        description: Run all recorded engine patch checks
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: downstream-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_BUILD_JOBS: 2
+  CARGO_PROFILE_DEV_DEBUG: 0
+  CARGO_PROFILE_TEST_DEBUG: 0
+  PYTHONDONTWRITEBYTECODE: 1
+
+jobs:
+  maintenance:
+    name: downstream-maintenance
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      engine: ${{ steps.scope.outputs.engine }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+      - name: Install pinned Rust tools
+        run: |
+          rustup toolchain install 1.99.1 --profile minimal --component rustfmt --no-self-update
+          rustup override set 1.99.1
+      - name: Test maintenance failures and source compatibility
+        run: |
+          python3 -m unittest discover -s tools -p 'test_maintenance.py' -v
+          python3 tools/maintenance.py check
+          git diff --check
+      - name: Test the shared command transition without a renderer
+        run: |
+          rustfmt --check --edition 2024 examples/agent/*.rs
+          rustc --edition 2024 --test examples/agent/command_model.rs -o "$RUNNER_TEMP/command-model-tests"
+          "$RUNNER_TEMP/command-model-tests"
+      - name: Select engine checks
+        id: scope
+        env:
+          COMPARISON: ${{ github.event.pull_request.base.sha || github.event.before }}
+          FORCE_ENGINE: ${{ inputs.engine_tests }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT_NAME" = workflow_dispatch ]; then
+            echo "engine=${FORCE_ENGINE:-false}" >> "$GITHUB_OUTPUT"
+          elif [ -z "$COMPARISON" ] || [ "$COMPARISON" = 0000000000000000000000000000000000000000 ]; then
+            echo 'engine=true' >> "$GITHUB_OUTPUT"
+          else
+            echo "engine=$(python3 tools/maintenance.py needs-engine "$COMPARISON")" >> "$GITHUB_OUTPUT"
+          fi
+
+  engine:
+    name: downstream-engine-tests
+    needs: maintenance
+    if: needs.maintenance.outputs.engine == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+      - name: Install pinned Rust tools
+        run: |
+          rustup toolchain install 1.99.1 --profile minimal --component rustfmt,clippy --no-self-update
+          rustup override set 1.99.1
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: downstream-${{ runner.os }}-1.99.1-${{ hashFiles('Cargo.lock') }}
+      - name: Test, format, and lint every recorded engine patch package
+        env:
+          COMPARISON: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [ -n "$COMPARISON" ] && [ "$COMPARISON" != 0000000000000000000000000000000000000000 ]; then
+            python3 tools/maintenance.py test-engine --since "$COMPARISON"
+          else
+            python3 tools/maintenance.py test-engine
+          fi
+
+  ready:
+    name: downstream-ready
+    needs: [maintenance, engine]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Require every selected check to pass
+        env:
+          MAINTENANCE: ${{ needs.maintenance.result }}
+          ENGINE: ${{ needs.engine.result }}
+        run: |
+          test "$MAINTENANCE" = success
+          test "$ENGINE" = success || test "$ENGINE" = skipped

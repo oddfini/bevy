@@ -67,6 +67,12 @@ package identifiers are kept unchanged to limit update and dependency churn.
 
 ## Contribution workflow
 
+The exact base and active patch file hashes are tracked in
+`docs/maintenance/policy.json`. See `docs/maintenance/README.md` for selective
+upstream intake, adaptation records, replacement tests, promotion, and rollback.
+Use PRs with the `downstream-ready` check for downstream development. Runtime
+verification receipts are tied to their source inputs and screenshot contents.
+
 AI-assisted implementation, tests, and prose are allowed for this fork. Contributors
 remain responsible for review and verification. See `AGENTS.md` for the working
 instructions. Upstream Bevy has its own contribution and AI policies, which apply

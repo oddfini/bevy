@@ -34,6 +34,22 @@ copyright notices, and third-party credits.
 
 ## Verification
 
+Follow `CONTRIBUTING.md` for every change. `docs/maintenance/policy.json` is the
+machine-readable base and engine patch record. Use `tools/maintenance.py plan`
+before adopting an upstream commit. Keep original source SHAs and adaptations.
+Do not update a record or weaken a test solely to hide a failing check.
+
+Use task branches and PRs against `codex/teratorn-ai`. The required hosted status
+is `downstream-ready`. Do not bypass branch protection, push directly to the
+verified branch, or enable inherited release/deployment workflows for convenience.
+
+Run the guard regressions and fast Rust model tests from `CONTRIBUTING.md`.
+When engine files change, use `maintenance.py test-engine --since` with the exact
+PR base SHA. This includes every changed package, including an upstream baseline
+update. When runtime inputs change, run `agent-loop.py` with its checks/build
+enabled, then validate/copy evidence with `maintenance.py record`. A stale receipt
+must fail. Keep native runtime evidence separate from hosted headless results.
+
 For the button patch, run:
 
 ```sh

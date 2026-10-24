@@ -25,6 +25,9 @@ use rand::{RngExt, SeedableRng};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
+mod command_model;
+use command_model::{Counter, COUNT_LIMIT};
+
 fn main() {
     App::new()
         .add_plugins((DefaultPlugins, FeathersPlugins))
@@ -56,23 +59,18 @@ struct SeededRng(ChaCha8Rng);
 
 /// Small demo domain, deliberately independent of remote transport and UI layout.
 #[derive(Resource, Default)]
-struct AgentState {
-    revision: u64,
-    count: u32,
-}
+struct AgentState(Counter);
 
 #[derive(Component)]
 struct CounterText;
 
-const COUNT_LIMIT: u32 = 10;
-
 fn snapshot(state: &AgentState) -> Value {
     json!({
         "schema": 1,
-        "revision": state.revision,
-        "count": state.count,
+        "revision": state.0.revision(),
+        "count": state.0.count(),
         "limit": COUNT_LIMIT,
-        "legalActions": if state.count < COUNT_LIMIT { vec!["increment"] } else { vec![] },
+        "legalActions": if state.0.count() < COUNT_LIMIT { vec!["increment"] } else { vec![] },
     })
 }
 
@@ -85,12 +83,7 @@ fn invalid_request(message: &str) -> BrpError {
 }
 
 fn increment(state: &mut AgentState) -> Result<(), BrpError> {
-    if state.count >= COUNT_LIMIT {
-        return Err(invalid_request("The counter has reached its limit."));
-    }
-    state.count += 1;
-    state.revision += 1;
-    Ok(())
+    state.0.increment().map_err(invalid_request)
 }
 
 fn agent_state(In(_params): In<Option<Value>>, world: &World) -> BrpResult {
@@ -109,16 +102,11 @@ fn agent_act(In(params): In<Option<Value>>, world: &mut World) -> BrpResult {
         params.ok_or_else(|| invalid_request("Action parameters are required."))?,
     )
     .map_err(|error| invalid_request(&error.to_string()))?;
-    if request.action != "increment" {
-        return Err(invalid_request("Unknown action."));
-    }
     let mut state = world.resource_mut::<AgentState>();
-    if request.expected_revision != state.revision {
-        return Err(invalid_request(
-            "The state revision has changed. Read agent.state again.",
-        ));
-    }
-    increment(&mut state)?;
+    state
+        .0
+        .act(&request.action, request.expected_revision)
+        .map_err(invalid_request)?;
     Ok(snapshot(&state))
 }
 
@@ -127,14 +115,14 @@ fn on_button_click(click: On<PointerClick>, mut state: ResMut<AgentState>) {
         if let Err(error) = increment(&mut state) {
             warn!("{}", error.message);
         } else {
-            info!("Button pressed! revision={}", state.revision);
+            info!("Button pressed! revision={}", state.0.revision());
         }
     }
 }
 
 fn update_counter(state: Res<AgentState>, mut text: Single<&mut Text, With<CounterText>>) {
     if state.is_changed() {
-        text.0 = format!("Count: {} / {COUNT_LIMIT}", state.count);
+        text.0 = format!("Count: {} / {COUNT_LIMIT}", state.0.count());
     }
 }
 

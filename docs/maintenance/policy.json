@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "upstream": "https://github.com/bevyengine/bevy",
+  "base": "3a796854abd94144c6e08c4112e5bd9229392b37",
+  "examples": [
+    {"name": "agent_control_app", "path": "examples/agent/control_app.rs", "required-features": ["bevy_remote", "bevy_feathers"]},
+    {"name": "agent_control_test", "path": "examples/agent/control_test.rs", "required-features": ["bevy_remote_client", "bevy_feathers"]}
+  ],
+  "testPackages": ["bevy_ui_widgets"],
+  "patches": [
+    {
+      "id": "disabled-button-cleanup",
+      "origin": "downstream",
+      "source": "53f822bcf0d1c4510f85f12c0bdf3b1912ece339",
+      "status": "active",
+      "reason": "Release, drag end, and cancellation must remove Pressed after a button becomes disabled.",
+      "regression": "Six tests in crates/bevy_ui_widgets/src/button.rs cover cleanup and preserve disabled activation guards.",
+      "files": {
+        "crates/bevy_ui_widgets/src/button.rs": "55aaf526008ef682ea95c4440d0789e231580b000769d92358302b9bcfe9015e"
+      }
+    }
+  ]
+}

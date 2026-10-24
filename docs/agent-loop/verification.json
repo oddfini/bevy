@@ -1,15 +1,96 @@
 {
-  "schema": 1,
+  "schema": 2,
   "ok": true,
-  "sourceSha256": {
-    "examples/agent/control_app.rs": "5cbaf18aed43d49858bc4b908c240f029c2f0a09ce2ef3793cf7ac4d3e2b8a7a",
-    "examples/agent/control_test.rs": "1550f1b42b2b9c610ea9d6cca503963ed586474745f816e022361355a58fa590",
-    "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64"
+  "buildVerified": true,
+  "checks": {
+    "format": {
+      "command": [
+        "rustfmt",
+        "--check",
+        "--edition",
+        "2024",
+        "examples/agent/command_model.rs",
+        "examples/agent/control_app.rs",
+        "examples/agent/control_test.rs"
+      ],
+      "exitCode": 0
+    },
+    "exampleTests": {
+      "command": [
+        "cargo",
+        "test",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "ui,bevy_remote_client,bevy_feathers",
+        "-j",
+        "1",
+        "--offline",
+        "--example",
+        "agent_control_app"
+      ],
+      "exitCode": 0
+    },
+    "clippy": {
+      "command": [
+        "cargo",
+        "clippy",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "ui,bevy_remote_client,bevy_feathers",
+        "-j",
+        "1",
+        "--offline",
+        "--example",
+        "agent_control_app",
+        "--example",
+        "agent_control_test",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exitCode": 0
+    },
+    "build": {
+      "command": [
+        "cargo",
+        "build",
+        "--locked",
+        "--no-default-features",
+        "--features",
+        "ui,bevy_remote_client,bevy_feathers",
+        "-j",
+        "1",
+        "--offline",
+        "--example",
+        "agent_control_app",
+        "--example",
+        "agent_control_test"
+      ],
+      "exitCode": 0
+    }
   },
+  "verifiedDate": "2026-10-24",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "sourceSha256": {
+    "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64",
+    "Cargo.toml": "d527e2edf03fade28ae3c3c6accaed37ed3cbd7fa01ac921cbdb907d189ffe1b",
+    "crates/bevy_ui_widgets/src/button.rs": "55aaf526008ef682ea95c4440d0789e231580b000769d92358302b9bcfe9015e",
+    "docs/maintenance/policy.json": "969a4227189e42986df8568b49ee40620cfed58588571a7aaf694543d0bc70ee",
+    "examples/agent/command_model.rs": "b5769b01eab2fabc7017a252e7aa704cbb524c9c323b1da4a7ff2d3021ce0b95",
+    "examples/agent/control_app.rs": "951c89d4e7aeb90c4719c783098e443925df8574cd4b65a48162bf2f5448193b",
+    "examples/agent/control_test.rs": "1550f1b42b2b9c610ea9d6cca503963ed586474745f816e022361355a58fa590",
+    "tools/agent-loop.py": "6af8d3c6e42d4db9a2598f6fbf080b8e637b88cb86714babe8d938440d654d14",
+    "tools/maintenance.py": "b0c3de8aedabaad2d6a78a286c4f5e724248d59864bfedf7c21439220d6d5d97"
+  },
+  "cargoVersion": "cargo 1.99.1 (5f94df478 2026-08-27)",
+  "rustcVersion": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
   "binarySha256": {
-    "agent_control_app": "fdaab2ad5cac0c44cc86256ba976d847ac3e67a8414d3d9c4e871950d35088ce",
+    "agent_control_app": "062bd9a654046cac169afeccb57e8961f40956b11fc59f2475310904309dfaa1",
     "agent_control_test": "c928c5fbe53278370c52b06f6e239e49cfbe35c009abf5fd255c1498fdbf4c98"
   },
+  "screenshotSha256": "c866b3634c8622ef2dc32051382b9bb1362983e8a95fb330af6117da9de7a349",
   "initial": {
     "count": 0,
     "legalActions": [
@@ -64,26 +145,9 @@
     "ok": true,
     "schema": 1,
     "screenshot": {
-      "height": 720,
+      "height": 1440,
       "path": "screenshot.png",
-      "width": 1280
+      "width": 2560
     }
-  },
-  "verifiedDate": "2026-10-25",
-  "platform": "macOS",
-  "focusedUnitTests": {
-    "passed": 4,
-    "failed": 0
-  },
-  "format": "passed for changed Rust example files",
-  "scope": "Isolated counter examples only. No Teratorn game integration or mobile-runtime validation.",
-  "upstreamCompatibility": {
-    "base": "3a796854abd94144c6e08c4112e5bd9229392b37",
-    "originalRemoteExamplesPreserved": true,
-    "originalCargoManifestPreserved": true,
-    "engineSourceDifferences": [
-      "crates/bevy_ui_widgets/src/button.rs"
-    ]
-  },
-  "clippy": "passed for both isolated examples with warnings treated as errors"
+  }
 }
