@@ -16,7 +16,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use anyhow::{bail, Result as AnyhowResult};
+use anyhow::{bail, ensure, Result as AnyhowResult};
 use bevy::{
     app::AppExit,
     feathers::controls::FeathersButton,
@@ -56,11 +56,67 @@ fn main() -> AnyhowResult<()> {
     let window_entity = wait_for_window(&client)?;
     println!("Found window entity: {window_entity}");
 
-    // Step 2: Take a screenshot via BRP
+    let before_click = block_on(client.call("agent.state", None))?;
+
+    // Step 2: Find the button entity, and watch for it being activated
+    println!("Querying for button entity...");
+    let (button_entity, _) = find_button(&client)?;
+    println!("Observing Activate on entity {button_entity}...");
+    let activations = watch(
+        &url,
+        BrpObserveParams {
+            event: type_name::<Activate>().to_string(),
+            entity: Some(serde_json::from_value(button_entity)?),
+        },
+    )?;
+
+    // Step 3: Click the button, until it's activated
+    let mut clicked = false;
+    for attempt in 1..=CLICK_TRIES {
+        // The button moves, so find it again before each click
+        let (_, (phys_x, phys_y)) = find_button(&client)?;
+        println!("Click {attempt}/{CLICK_TRIES} at physical ({phys_x}, {phys_y})");
+        click(&client, &window_entity, phys_x, phys_y)?;
+
+        match activations.recv_timeout(CLICK_TIMEOUT) {
+            Ok(_) => {
+                println!("Button activated!");
+                clicked = true;
+                break;
+            }
+            Err(RecvTimeoutError::Timeout) => {
+                println!("Button not activated after {CLICK_TIMEOUT:?}");
+            }
+            Err(RecvTimeoutError::Disconnected) => bail!("Activate stream closed"),
+        }
+    }
+    if !clicked {
+        bail!("Button not activated after {CLICK_TRIES} clicks");
+    }
+
+    let after_click = block_on(client.call("agent.state", None))?;
+    ensure!(
+        after_click["count"].as_u64() == before_click["count"].as_u64().map(|n| n + 1),
+        "The real UI click did not advance the domain counter exactly once"
+    );
+    ensure!(
+        after_click["revision"].as_u64() == before_click["revision"].as_u64().map(|n| n + 1),
+        "The real UI click did not advance the state revision exactly once"
+    );
+
+    // Step 4: Take a screenshot of the resulting state via BRP
     // The window must be visible (not fully occluded) for the GPU to render content
     // If the window is hidden, the screenshot will be black
+    // Subscribe before capture so a fast frame cannot finish before observation starts.
+    let screenshots = watch(
+        &url,
+        BrpObserveParams {
+            event: type_name::<ScreenshotCaptured>().to_string(),
+            entity: None,
+        },
+    )?;
     println!("Spawning Screenshot entity...");
-    let spawn_response = brp_request(
+    brp_request(
         &client,
         BRP_SPAWN_ENTITY_METHOD,
         &BrpSpawnEntityParams {
@@ -70,17 +126,6 @@ fn main() -> AnyhowResult<()> {
             )]),
         },
     )?;
-    let screenshot_entity = &spawn_response["entity"];
-
-    println!("Observing ScreenshotCaptured on entity {screenshot_entity}...");
-    let screenshots = watch(
-        &url,
-        BrpObserveParams {
-            event: type_name::<ScreenshotCaptured>().to_string(),
-            entity: Some(serde_json::from_value(screenshot_entity.clone())?),
-        },
-    )?;
-
     println!("Waiting for screenshot capture...");
     let events = match screenshots.recv_timeout(SCREENSHOT_TIMEOUT) {
         Ok(events) => events,
@@ -104,41 +149,16 @@ fn main() -> AnyhowResult<()> {
     dyn_img.to_rgb8().save(path)?;
     println!("Screenshot saved to {path}");
 
-    // Step 3: Find the button entity, and watch for it being activated
-    println!("Querying for button entity...");
-    let (button_entity, _) = find_button(&client)?;
-    println!("Observing Activate on entity {button_entity}...");
-    let activations = watch(
-        &url,
-        BrpObserveParams {
-            event: type_name::<Activate>().to_string(),
-            entity: Some(serde_json::from_value(button_entity)?),
-        },
+    std::fs::write(
+        "agent-report.json",
+        serde_json::to_string_pretty(&serde_json::json!({
+            "schema": 1,
+            "ok": true,
+            "beforeClick": before_click,
+            "afterClick": after_click,
+            "screenshot": {"path": path, "width": width, "height": height},
+        }))?,
     )?;
-
-    // Step 4: Click the button, until it's activated
-    let mut clicked = false;
-    for attempt in 1..=CLICK_TRIES {
-        // The button moves, so find it again before each click
-        let (_, (phys_x, phys_y)) = find_button(&client)?;
-        println!("Click {attempt}/{CLICK_TRIES} at physical ({phys_x}, {phys_y})");
-        click(&client, &window_entity, phys_x, phys_y)?;
-
-        match activations.recv_timeout(CLICK_TIMEOUT) {
-            Ok(_) => {
-                println!("Button activated!");
-                clicked = true;
-                break;
-            }
-            Err(RecvTimeoutError::Timeout) => {
-                println!("Button not activated after {CLICK_TIMEOUT:?}");
-            }
-            Err(RecvTimeoutError::Disconnected) => bail!("Activate stream closed"),
-        }
-    }
-    if !clicked {
-        bail!("Button not activated after {CLICK_TRIES} clicks");
-    }
 
     // Step 5: Ask the app to exit
     println!("Asking the app to exit...");
@@ -277,8 +297,10 @@ fn watch(url: &str, params: BrpObserveParams) -> AnyhowResult<Receiver<Vec<serde
     };
     let url = url.to_string();
     let (sender, receiver) = mpsc::channel();
+    let response = ureq::post(&url).send_json(request)?;
+    let reader = std::io::BufReader::new(response.into_body().into_reader());
     thread::spawn(move || {
-        if let Err(err) = read_watch_stream(&url, request, sender) {
+        if let Err(err) = read_watch_stream(reader, sender) {
             eprintln!("Watching failed: {err}");
         }
     });
@@ -287,12 +309,9 @@ fn watch(url: &str, params: BrpObserveParams) -> AnyhowResult<Receiver<Vec<serde
 
 /// Sends a watching request, and forwards the events of each server-sent event to `sender`.
 fn read_watch_stream(
-    url: &str,
-    request: BrpRequest,
+    reader: impl BufRead,
     sender: mpsc::Sender<Vec<serde_json::Value>>,
 ) -> AnyhowResult<()> {
-    let response = ureq::post(url).send_json(request)?;
-    let reader = std::io::BufReader::new(response.into_body().into_reader());
     for line in reader.lines() {
         let line = line?;
         let Some(json_str) = line.strip_prefix("data: ") else {
