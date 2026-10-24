@@ -2,13 +2,13 @@
   "schema": 1,
   "ok": true,
   "sourceSha256": {
-    "examples/remote/app_under_test.rs": "63a0664cfc4b09a63e7262c13b6d7b5b23a2e490c29d9bd949e09123844df0da",
-    "examples/remote/integration_test.rs": "a52f644c8e8edf915079153ee48c17e97ec11fef4ac7e552db58d94768298b70",
+    "examples/agent/control_app.rs": "5cbaf18aed43d49858bc4b908c240f029c2f0a09ce2ef3793cf7ac4d3e2b8a7a",
+    "examples/agent/control_test.rs": "1550f1b42b2b9c610ea9d6cca503963ed586474745f816e022361355a58fa590",
     "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64"
   },
   "binarySha256": {
-    "app_under_test": "dfa571b6abea7ade3d6ea1d9894df1ac98de001f1d4dd8c6bbb11f01f41b0813",
-    "integration_test": "5d40e7b6fd63a40c83f748e642124e0862dde1d9918ec77bc2919fcfb417868c"
+    "agent_control_app": "fdaab2ad5cac0c44cc86256ba976d847ac3e67a8414d3d9c4e871950d35088ce",
+    "agent_control_test": "c928c5fbe53278370c52b06f6e239e49cfbe35c009abf5fd255c1498fdbf4c98"
   },
   "initial": {
     "count": 0,
@@ -64,9 +64,9 @@
     "ok": true,
     "schema": 1,
     "screenshot": {
-      "height": 1440,
+      "height": 720,
       "path": "screenshot.png",
-      "width": 2560
+      "width": 1280
     }
   },
   "verifiedDate": "2026-10-25",
@@ -75,12 +75,15 @@
     "passed": 4,
     "failed": 0
   },
-  "negativeControls": [
-    "missing binaries fail with a nonzero exit",
-    "non-finite timeout is rejected",
-    "a failed client reports failure and terminates its own app process"
-  ],
-  "scope": "Counter example only. No Teratorn game integration or mobile-runtime validation.",
   "format": "passed for changed Rust example files",
-  "clippy": "passed for both examples with warnings treated as errors"
+  "scope": "Isolated counter examples only. No Teratorn game integration or mobile-runtime validation.",
+  "upstreamCompatibility": {
+    "base": "3a796854abd94144c6e08c4112e5bd9229392b37",
+    "originalRemoteExamplesPreserved": true,
+    "originalCargoManifestPreserved": true,
+    "engineSourceDifferences": [
+      "crates/bevy_ui_widgets/src/button.rs"
+    ]
+  },
+  "clippy": "passed for both isolated examples with warnings treated as errors"
 }

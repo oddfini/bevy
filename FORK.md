@@ -31,6 +31,22 @@ documentation tests on macOS. Formatting passed. Clippy passed for all targets o
 this crate with warnings treated as errors. This is a focused engine check, not a
 whole-workspace or mobile-runtime validation.
 
+## Upstream compatibility policy
+
+Preserve Bevy's internal names, module layout, and public APIs. Prefer separate
+tools, downstream examples, and plugins for new development capabilities. The
+current engine-internal difference is the button cleanup fix and its tests.
+
+Our examples live under `examples/agent/`; both original remote example files are
+preserved byte-for-byte from the engine base. Cargo only adds their downstream
+example targets. Keep core patches isolated from tooling and documentation commits.
+
+Evaluate an upstream revision on a task branch, run affected regression tests and
+the agent loop, then pin the verified revision. Check Teratorn's compatibility before
+changing its engine dependency. Mark a downstream fix as superseded after verifying
+an equivalent upstream implementation. Preserve the fixed behavior and published
+history rather than undoing the old fix commit.
+
 ## Game integration
 
 The existing Teratorn Bevy game prototype still uses released Bevy 0.20.0. Creating
@@ -40,7 +56,7 @@ existing C# reference.
 
 ## Agent command loop
 
-The remote examples share a counter transition between `agent.act` and real UI
+The downstream examples share a counter transition between `agent.act` and real UI
 input. `agent.state` exposes revisions and legal actions. Rejected commands must
 preserve state. `tools/agent-loop.py` builds and exercises the examples and writes
 structured results, process logs, and a native screenshot.

@@ -55,7 +55,7 @@ binaries after a successful build. `CARGO_TARGET_DIR` selects the binary directo
 Focused domain tests:
 
 ```sh
-cargo test --example app_under_test --no-default-features \
+cargo test --example agent_control_app --no-default-features \
   --features ui,bevy_remote_client,bevy_feathers --locked
 ```
 
@@ -65,6 +65,12 @@ Use Teratorn as the first real game to validate the workflow. Keep the game rule
 player-facing UI, accessibility, and platform integration in the game project.
 Add development capabilities when a concrete workflow needs them. Data-driven
 layout editing and direct Teratorn integration are future work.
+
+Preserve Bevy's internal names, public APIs, module layout, and original examples.
+Our examples live under `examples/agent/`. New development features belong in tools
+or plugins using public APIs. Keep necessary core bug fixes small and isolated.
+Test upstream updates on a task branch before changing a verified engine revision;
+see [the compatibility policy](FORK.md#upstream-compatibility-policy).
 
 ## Origin and license
 

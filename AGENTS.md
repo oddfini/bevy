@@ -16,6 +16,22 @@ copyright notices, and third-party credits.
 - Reuse Bevy systems before adding abstractions. Do not turn a game-specific
   adapter into a general framework without a concrete need.
 
+## Preserve upstream compatibility
+
+- Keep upstream crate and package names, module layout, and public API identifiers.
+- Add our development features in separate tools, downstream examples under
+  `examples/agent/`, or plugins using Bevy's public APIs. Preserve original examples.
+- Avoid source-wide renames, API replacements, and broad refactors of Bevy internals.
+- Limit engine-internal patches to reproduced bugs or a demonstrated requirement
+  that public extension points cannot meet. Isolate each patch and its regression
+  tests in a focused commit and document its purpose in `FORK.md`.
+- Evaluate upstream updates on a task branch against an exact revision. Keep the
+  currently verified revision until focused tests and the agent loop pass. Check
+  game compatibility before changing a game's pinned engine dependency.
+- When upstream contains an equivalent fix, verify its behavior and mark the
+  downstream patch as superseded. Preserve the fixed behavior; do not undo a fix
+  just to remove an old patch commit. Do not rewrite published history.
+
 ## Verification
 
 For the button patch, run:

@@ -5907,3 +5907,14 @@ bevy_pbr = { path = "crates/bevy_pbr" }
 bevy_core_pipeline = { path = "crates/bevy_core_pipeline" }
 bevy_sprite_render = { path = "crates/bevy_sprite_render" }
 bevy_ui_render = { path = "crates/bevy_ui_render" }
+
+# Downstream examples. Keep upstream examples and engine identifiers unchanged.
+[[example]]
+name = "agent_control_app"
+path = "examples/agent/control_app.rs"
+required-features = ["bevy_remote", "bevy_feathers"]
+
+[[example]]
+name = "agent_control_test"
+path = "examples/agent/control_test.rs"
+required-features = ["bevy_remote_client", "bevy_feathers"]

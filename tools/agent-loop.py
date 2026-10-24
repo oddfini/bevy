@@ -56,25 +56,25 @@ def main():
     report = {"schema": 1, "ok": False}
     report["sourceSha256"] = {
         name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-        for name in ("examples/remote/app_under_test.rs", "examples/remote/integration_test.rs", "Cargo.lock")
+        for name in ("examples/agent/control_app.rs", "examples/agent/control_test.rs", "Cargo.lock")
     }
     try:
         if not args.skip_build:
             command = [args.cargo, "build", "--locked", "--no-default-features", "--features", FEATURES,
-                       "--example", "app_under_test", "--example", "integration_test", "-j", "3"]
+                       "--example", "agent_control_app", "--example", "agent_control_test", "-j", "3"]
             if args.offline:
                 command.append("--offline")
             subprocess.run(command, cwd=ROOT, check=True)
         report["binarySha256"] = {
             name: hashlib.sha256((examples / (name + suffix)).read_bytes()).hexdigest()
-            for name in ("app_under_test", "integration_test")
+            for name in ("agent_control_app", "agent_control_test")
         }
         with socket.socket() as probe:
             probe.settimeout(1)
             if probe.connect_ex(("127.0.0.1", 15702)) == 0:
                 raise RuntimeError("BRP port 15702 is occupied; no existing process was changed")
         with (output / "app.log").open("w") as app_log:
-            server = subprocess.Popen([str(examples / ("app_under_test" + suffix))],
+            server = subprocess.Popen([str(examples / ("agent_control_app" + suffix))],
                                       cwd=ROOT, stdout=app_log, stderr=subprocess.STDOUT)
             deadline = time.monotonic() + min(args.timeout, 60)
             while True:
@@ -100,7 +100,7 @@ def main():
                 if rpc("agent.state") != updated:
                     raise RuntimeError("A rejected action changed state")
             with (output / "client.log").open("w") as client_log:
-                subprocess.run([str(examples / ("integration_test" + suffix))], cwd=output,
+                subprocess.run([str(examples / ("agent_control_test" + suffix))], cwd=output,
                                stdout=client_log, stderr=subprocess.STDOUT,
                                timeout=args.timeout, check=True)
             server.wait(timeout=10)
