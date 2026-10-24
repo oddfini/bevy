@@ -1,3 +1,8 @@
+> **Experimental downstream fork:** this repository is maintained in
+> `yongjip/bevy` for Teratorn and AI-assisted development experiments.
+> Read [FORK.md](FORK.md) for the patch scope, verification, and upstream boundary.
+> The original Bevy README follows below.
+
 # [![Bevy](https://bevy.org/assets/bevy_logo_light_dark_and_dimmed.svg)](https://bevy.org)
 
 [![License](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/bevyengine/bevy#license)
