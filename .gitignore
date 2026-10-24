@@ -14,7 +14,7 @@ dxcompiler.dll
 dxil.dll
 
 # Cargo
-Cargo.lock
+# Cargo.lock is tracked for repeatable builds in this downstream tooling fork.
 .cargo/config
 .cargo/config.toml
 
