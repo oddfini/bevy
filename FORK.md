@@ -3,9 +3,10 @@
 This is an experimental fork maintained in `yongjip/bevy`. It is separate from
 the official [Bevy project](https://github.com/bevyengine/bevy).
 
-The goal is to use Bevy for Teratorn while testing an AI-assisted development and
-maintenance workflow. Keep a small downstream patch set so upstream updates remain
-reviewable. Engine changes belong here; game rules and private game assets do not.
+The goal is an AI-assisted game development and maintenance toolkit, using Bevy as
+its runtime and Teratorn as its first real game. Keep a small downstream patch set
+so upstream updates remain reviewable. Development tools and engine changes belong
+here; game rules and private game assets do not.
 
 ## Branches and license
 
@@ -36,6 +37,17 @@ The existing Teratorn Bevy game prototype still uses released Bevy 0.20.0. Creat
 this fork does not switch that application's engine dependency. Pin any future
 integration to an exact tested revision and compare its game results with the
 existing C# reference.
+
+## Agent command loop
+
+The remote examples share a counter transition between `agent.act` and real UI
+input. `agent.state` exposes revisions and legal actions. Rejected commands must
+preserve state. `tools/agent-loop.py` builds and exercises the examples and writes
+structured results, process logs, and a native screenshot.
+
+The toolkit README describes the downstream workflow. The original Bevy README is
+preserved in `UPSTREAM_README.md`. A new product name has not been selected; engine
+package identifiers are kept unchanged to limit update and dependency churn.
 
 ## Contribution workflow
 

@@ -18,13 +18,18 @@ copyright notices, and third-party credits.
 
 ## Verification
 
-For the current button patch, run:
+For the button patch, run:
 
 ```sh
 cargo fmt -p bevy_ui_widgets --check
 cargo test -p bevy_ui_widgets --locked
 cargo clippy -p bevy_ui_widgets --all-targets --locked -- -D warnings
 ```
+
+For the agent-loop example, use the focused test command in `README.md` and run
+`python3 tools/agent-loop.py` for actual input, domain state, and screenshot proof.
+Reserve a shared desktop before windowed runs when the local project requires it.
+Do not treat a successful command invocation or screenshot alone as behavioral proof.
 
 Use matching checks for other changed crates. Changes to rendering, input, or
 mobile behavior also need relevant runtime evidence. Headless tests do not prove

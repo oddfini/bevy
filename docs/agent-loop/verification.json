@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "ok": true,
+  "sourceSha256": {
+    "examples/remote/app_under_test.rs": "63a0664cfc4b09a63e7262c13b6d7b5b23a2e490c29d9bd949e09123844df0da",
+    "examples/remote/integration_test.rs": "a52f644c8e8edf915079153ee48c17e97ec11fef4ac7e552db58d94768298b70",
+    "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64"
+  },
+  "binarySha256": {
+    "app_under_test": "dfa571b6abea7ade3d6ea1d9894df1ac98de001f1d4dd8c6bbb11f01f41b0813",
+    "integration_test": "5d40e7b6fd63a40c83f748e642124e0862dde1d9918ec77bc2919fcfb417868c"
+  },
+  "initial": {
+    "count": 0,
+    "legalActions": [
+      "increment"
+    ],
+    "limit": 10,
+    "revision": 0,
+    "schema": 1
+  },
+  "afterCommand": {
+    "count": 1,
+    "legalActions": [
+      "increment"
+    ],
+    "limit": 10,
+    "revision": 1,
+    "schema": 1
+  },
+  "rejectedActions": [
+    {
+      "code": -32602,
+      "message": "The state revision has changed. Read agent.state again."
+    },
+    {
+      "code": -32602,
+      "message": "Unknown action."
+    },
+    {
+      "code": -32602,
+      "message": "unknown field `extra`, expected `action` or `expectedRevision`"
+    }
+  ],
+  "ui": {
+    "afterClick": {
+      "count": 2,
+      "legalActions": [
+        "increment"
+      ],
+      "limit": 10,
+      "revision": 2,
+      "schema": 1
+    },
+    "beforeClick": {
+      "count": 1,
+      "legalActions": [
+        "increment"
+      ],
+      "limit": 10,
+      "revision": 1,
+      "schema": 1
+    },
+    "ok": true,
+    "schema": 1,
+    "screenshot": {
+      "height": 1440,
+      "path": "screenshot.png",
+      "width": 2560
+    }
+  },
+  "verifiedDate": "2026-10-25",
+  "platform": "macOS",
+  "focusedUnitTests": {
+    "passed": 4,
+    "failed": 0
+  },
+  "negativeControls": [
+    "missing binaries fail with a nonzero exit",
+    "non-finite timeout is rejected",
+    "a failed client reports failure and terminates its own app process"
+  ],
+  "scope": "Counter example only. No Teratorn game integration or mobile-runtime validation.",
+  "format": "passed for changed Rust example files",
+  "clippy": "passed for both examples with warnings treated as errors"
+}

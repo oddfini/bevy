@@ -1,136 +1,81 @@
-> **Experimental downstream fork:** this repository is maintained in
-> `yongjip/bevy` for Teratorn and AI-assisted development experiments.
-> Read [FORK.md](FORK.md) for the patch scope, verification, and upstream boundary.
-> The original Bevy README follows below.
+# AI-assisted game development and maintenance
 
-# [![Bevy](https://bevy.org/assets/bevy_logo_light_dark_and_dimmed.svg)](https://bevy.org)
+An experimental Rust toolkit for agents that build, run, inspect, and verify games.
+This fork uses Bevy as its runtime. It keeps developer-facing GUI work small and
+prioritizes commands, structured state, repeatable runs, and evidence.
 
-[![License](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)](https://github.com/bevyengine/bevy#license)
-[![Crates.io](https://img.shields.io/crates/v/bevy.svg)](https://crates.io/crates/bevy)
-[![Downloads](https://img.shields.io/crates/d/bevy.svg)](https://crates.io/crates/bevy)
-[![Docs](https://docs.rs/bevy/badge.svg)](https://docs.rs/bevy/latest/bevy/)
-[![Discord](https://img.shields.io/discord/691052431525675048.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/bevy)
+This is an early prototype. The product name is not yet selected. The GitHub
+repository and internal Rust package names currently remain unchanged.
 
-## What is Bevy?
+## First working slice
 
-Bevy is a refreshingly simple data-driven game engine built in Rust. It is free and open-source forever!
+The remote example is a small counter with one shared transition for an agent
+command and a real UI click. It is a test of the development workflow, not a new
+game engine or a completed Teratorn migration.
 
-## WARNING
+- `agent.state` returns the current revision, counter, and legal actions.
+- `agent.act` checks the action and expected revision before changing state.
+- Unknown, malformed, stale, and over-limit actions leave state unchanged.
+- The client finds the real button, injects pointer input, verifies the resulting
+  domain state, and captures the rendered window.
+- A command-line runner saves JSON results, a screenshot, and process logs.
 
-Bevy is still in the early stages of development. Important features are missing. Documentation is sparse. A new version of Bevy containing breaking changes to the API is released [approximately once every 3 months](https://bevy.org/news/bevy-0-6/#the-train-release-schedule). We provide [migration guides](https://bevy.org/learn/migration-guides/), but we can't guarantee migrations will always be easy. Use only if you are willing to work in this environment.
+The example reuses the existing Bevy Remote Protocol. It adds no editor GUI or
+separate MCP server. Developer automation is local to this example; it is not a
+production multiplayer API.
 
-**MSRV:** Bevy relies heavily on improvements in the Rust language and compiler.
-As a result, the Minimum Supported Rust Version (MSRV) is generally close to "the latest stable release" of Rust.
+Verified on macOS on 2026-10-25: four focused unit tests, rejected-command checks,
+real pointer input, domain-state assertions, screenshot capture, and normal app
+exit passed. Missing binaries and a non-finite timeout correctly failed. Evidence:
+[JSON result](docs/agent-loop/verification.json) and
+[rendered screenshot](docs/agent-loop/screenshot.png).
 
-## Design Goals
+The local unoptimized example build emitted a large-unwind-section linker warning.
+These checks do not establish release performance or mobile behavior.
 
-* **Capable**: Offer a complete 2D and 3D feature set
-* **Simple**: Easy for newbies to pick up, but infinitely flexible for power users
-* **Data Focused**: Data-oriented architecture using the Entity Component System paradigm
-* **Modular**: Use only what you need. Replace what you don't like
-* **Fast**: App logic should run quickly, and when possible, in parallel
-* **Productive**: Changes should compile quickly ... waiting isn't fun
+## Run the verification
 
-## About
+Rust, Python 3, a desktop session, and the platform dependencies for Bevy are
+required. On shared machines, reserve the desktop through the local QA process
+before starting a windowed run.
 
-* **[Features](https://bevy.org):** A quick overview of Bevy's features.
-* **[News](https://bevy.org/news/)**: A development blog that covers our progress, plans and shiny new features.
-
-## Docs
-
-* **[Quick Start Guide](https://bevy.org/learn/quick-start/introduction):** Bevy's official Quick Start Guide. The best place to start learning Bevy.
-* **[Bevy Rust API Docs](https://docs.rs/bevy):** Bevy's Rust API docs, which are automatically generated from the doc comments in this repo.
-* **[Official Examples](https://github.com/bevyengine/bevy/tree/latest/examples):** Bevy's dedicated, runnable examples, which are great for digging into specific concepts.
-* **[Community-Made Learning Resources](https://bevy.org/assets/#learning)**: More tutorials, documentation, and examples made by the Bevy community.
-
-## Community
-
-Before contributing or participating in discussions with the community, you should familiarize yourself with our [**Code of Conduct**](./CODE_OF_CONDUCT.md).
-
-* **[Discord](https://discord.gg/bevy):** Bevy's official discord server.
-* **[Reddit](https://reddit.com/r/bevy):** Bevy's official subreddit.
-* **[GitHub Discussions](https://github.com/bevyengine/bevy/discussions):** The best place for questions about Bevy, answered right here!
-* **[Bevy Assets](https://bevy.org/assets/):** A collection of awesome Bevy projects, tools, plugins and learning materials.
-
-### Contributing
-
-If you'd like to help build Bevy, check out the **[Contributor's Guide](https://bevy.org/learn/contribute/introduction)**.
-For simple problems, feel free to [open an issue](https://github.com/bevyengine/bevy/issues) or
-[PR](https://github.com/bevyengine/bevy/pulls) and tackle it yourself!
-
-For more complex architecture decisions and experimental mad science, please open a [GitHub Discussion](https://github.com/bevyengine/bevy/discussions) so we can brainstorm together effectively!
-
-## Getting Started
-
-We recommend checking out the [Quick Start Guide](https://bevy.org/learn/quick-start/introduction) for a brief introduction.
-
-Follow the [Setup guide](https://bevy.org/learn/quick-start/getting-started/setup) to ensure your development environment is set up correctly.
-Once set up, you can quickly try out the [examples](https://github.com/bevyengine/bevy/tree/latest/examples) by cloning this repo and running the following commands:
+This fork tracks `Cargo.lock` so agents use the verified dependency resolution.
 
 ```sh
-# Switch to the correct version (latest release, default is main development branch)
-git checkout latest
-# Runs the "breakout" example
-cargo run --example breakout
+python3 tools/agent-loop.py --output /tmp/agent-loop-first-run
 ```
 
-To draw a window with standard functionality enabled, use:
+The output directory must be new. The runner builds two examples, starts the app,
+executes accepted and rejected actions, runs the pointer/capture client, and stops
+the app. It exits nonzero on a failed check and writes `summary.json`.
 
-```rust
-use bevy::prelude::*;
+Use `--offline` with a populated Cargo cache. Use `--skip-build` to reuse matching
+binaries after a successful build. `CARGO_TARGET_DIR` selects the binary directory.
 
-fn main() {
-    App::new()
-        .add_plugins(DefaultPlugins)
-        .run();
-}
+Focused domain tests:
+
+```sh
+cargo test --example app_under_test --no-default-features \
+  --features ui,bevy_remote_client,bevy_feathers --locked
 ```
 
-### Fast Compiles
+## Direction
 
-Bevy can be built just fine using default configuration on stable Rust. However for really fast iterative compiles, you should enable the "fast compiles" setup by [following the instructions here](https://bevy.org/learn/quick-start/getting-started/setup).
+Use Teratorn as the first real game to validate the workflow. Keep the game rules,
+player-facing UI, accessibility, and platform integration in the game project.
+Add development capabilities when a concrete workflow needs them. Data-driven
+layout editing and direct Teratorn integration are future work.
 
-## [Bevy Cargo Features][cargo_features]
+## Origin and license
 
-This [list][cargo_features] outlines the different cargo features supported by Bevy. These allow you to customize the Bevy feature set for your use-case.
+Based on [Bevy](https://github.com/bevyengine/bevy), with a small downstream patch
+set. This is an independent experiment maintained in `yongjip/bevy`.
 
-[cargo_features]: docs/cargo_features.md
+The engine source retains its MIT OR Apache-2.0 licensing, original copyright
+notices, and applicable third-party terms. See [LICENSE-MIT](LICENSE-MIT),
+[LICENSE-APACHE](LICENSE-APACHE), and [CREDITS.md](CREDITS.md). The original upstream
+README is preserved in [UPSTREAM_README.md](UPSTREAM_README.md).
 
-## Thanks
-
-Bevy is the result of the hard work of many people. A huge thanks to all Bevy contributors, the many open source projects that have come before us, the [Rust gamedev ecosystem](https://arewegameyet.rs/), and the many libraries we build on.
-
-A huge thanks to Bevy's [generous sponsors](https://bevy.org). Bevy will always be free and open source, but it isn't free to make. Please consider [sponsoring our work](https://bevy.org/donate/) if you like what we're building.
-
-<!-- This next line need to stay exactly as is. It is required for BrowserStack sponsorship. -->
-This project is tested with BrowserStack.
-
-## License
-
-Bevy is free, open source and permissively licensed!
-Except where noted (below and/or in individual files), all code in this repository is dual-licensed under either:
-
-* MIT License ([LICENSE-MIT](LICENSE-MIT) or [http://opensource.org/licenses/MIT](http://opensource.org/licenses/MIT))
-* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
-
-at your option.
-This means you can select the license you prefer!
-This dual-licensing approach is the de-facto standard in the Rust ecosystem and there are [very good reasons](https://github.com/bevyengine/bevy/issues/2373) to include both.
-
-Some of the engine's code carries additional copyright notices and license terms due to their external origins.
-These are generally BSD-like, but exact details vary by crate:
-If the README of a crate contains a 'License' header (or similar), the additional copyright notices and license terms applicable to that crate will be listed.
-The above licensing requirement still applies to contributions to those crates, and sections of those crates will carry those license terms.
-The [license](https://doc.rust-lang.org/cargo/reference/manifest.html#the-license-and-license-file-fields) field of each crate will also reflect this.
-
-The [assets](assets) included in this repository (for our [examples](./examples/README.md)) typically fall under different open licenses.
-These will not be included in your game (unless copied in by you), and they are not distributed in the published bevy crates.
-See [CREDITS.md](CREDITS.md) for the details of the licenses of those files.
-
-### Your contributions
-
-Unless you explicitly state otherwise,
-any contribution intentionally submitted for inclusion in the work by you,
-as defined in the Apache-2.0 license,
-shall be dual licensed as above,
-without any additional terms or conditions.
+For fork scope and contribution rules, read [FORK.md](FORK.md), [AGENTS.md](AGENTS.md),
+and [CONTRIBUTING.md](CONTRIBUTING.md). The upstream project's contribution policies
+apply when submitting work upstream.
