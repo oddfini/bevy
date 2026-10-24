@@ -2,16 +2,20 @@
 """Build and verify the fork's agent/UI command loop without an editor GUI."""
 
 import argparse
+from datetime import datetime, timezone
 import hashlib
 import json
 import math
 import os
 from pathlib import Path
+import platform
 import socket
 import subprocess
 import tempfile
 import time
 import urllib.request
+
+from maintenance import source_hashes
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,18 +57,31 @@ def main():
     examples = target / "debug" / "examples"
     suffix = ".exe" if os.name == "nt" else ""
     server = None
-    report = {"schema": 1, "ok": False}
-    report["sourceSha256"] = {
-        name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
-        for name in ("examples/agent/control_app.rs", "examples/agent/control_test.rs", "Cargo.lock")
-    }
+    report = {"schema": 2, "ok": False, "buildVerified": False, "checks": {},
+              "verifiedDate": datetime.now(timezone.utc).date().isoformat(),
+              "platform": platform.platform()}
     try:
+        report["sourceSha256"] = source_hashes(ROOT)
         if not args.skip_build:
-            command = [args.cargo, "build", "--locked", "--no-default-features", "--features", FEATURES,
-                       "--example", "agent_control_app", "--example", "agent_control_test", "-j", "3"]
+            flags = ["--locked", "--no-default-features", "--features", FEATURES, "-j", "1"]
             if args.offline:
-                command.append("--offline")
-            subprocess.run(command, cwd=ROOT, check=True)
+                flags.append("--offline")
+            targets = ["--example", "agent_control_app", "--example", "agent_control_test"]
+            rust_files = sorted(str(path.relative_to(ROOT)) for path in (ROOT / "examples/agent").rglob("*.rs"))
+            commands = {
+                "format": ["rustfmt", "--check", "--edition", "2024", *rust_files],
+                "exampleTests": [args.cargo, "test", *flags, "--example", "agent_control_app"],
+                "clippy": [args.cargo, "clippy", *flags, *targets, "--", "-D", "warnings"],
+                "build": [args.cargo, "build", *flags, *targets],
+            }
+            for name, command in commands.items():
+                print(json.dumps({"check": name, "log": str(output / (name + ".log"))}), flush=True)
+                with (output / (name + ".log")).open("w") as log:
+                    subprocess.run(command, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT, check=True)
+                report["checks"][name] = {"command": command, "exitCode": 0}
+            report["buildVerified"] = True
+        report["cargoVersion"] = subprocess.check_output([args.cargo, "--version"], text=True).strip()
+        report["rustcVersion"] = subprocess.check_output([os.environ.get("RUSTC", "rustc"), "--version"], text=True).strip()
         report["binarySha256"] = {
             name: hashlib.sha256((examples / (name + suffix)).read_bytes()).hexdigest()
             for name in ("agent_control_app", "agent_control_test")
@@ -114,6 +131,9 @@ def main():
         image = output / "screenshot.png"
         if image.read_bytes()[:8] != b"\x89PNG\r\n\x1a\n":
             raise RuntimeError("The captured screenshot is not a PNG")
+        if source_hashes(ROOT) != report["sourceSha256"]:
+            raise RuntimeError("Sources changed during verification; run again with stable inputs")
+        report["screenshotSha256"] = hashlib.sha256(image.read_bytes()).hexdigest()
         report.update(ok=True, initial=initial, afterCommand=updated,
                       rejectedActions=rejected, ui=ui_report)
     except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as error:

@@ -24,7 +24,7 @@ The example reuses the existing Bevy Remote Protocol. It adds no editor GUI or
 separate MCP server. Developer automation is local to this example; it is not a
 production multiplayer API.
 
-Verified on macOS on 2026-10-25: four focused unit tests, rejected-command checks,
+Verified on macOS on 2026-10-25: seven focused unit tests, rejected-command checks,
 real pointer input, domain-state assertions, screenshot capture, and normal app
 exit passed. Missing binaries and a non-finite timeout correctly failed. Evidence:
 [JSON result](docs/agent-loop/verification.json) and
@@ -49,8 +49,17 @@ The output directory must be new. The runner builds two examples, starts the app
 executes accepted and rejected actions, runs the pointer/capture client, and stops
 the app. It exits nonzero on a failed check and writes `summary.json`.
 
-Use `--offline` with a populated Cargo cache. Use `--skip-build` to reuse matching
-binaries after a successful build. `CARGO_TARGET_DIR` selects the binary directory.
+Use `--offline` with a populated Cargo cache. The driver runs formatting, focused
+tests, Clippy, and a locked build before the native run. `CARGO_TARGET_DIR` selects
+the binary directory. `--skip-build` produces diagnostic evidence that the
+maintenance gate will reject for publication as a verified result.
+
+Validate and save a successful run, then check the fork:
+
+```sh
+python3 -B tools/maintenance.py record /tmp/agent-loop-first-run
+python3 -B tools/maintenance.py check
+```
 
 Focused domain tests:
 
@@ -83,5 +92,7 @@ notices, and applicable third-party terms. See [LICENSE-MIT](LICENSE-MIT),
 README is preserved in [UPSTREAM_README.md](UPSTREAM_README.md).
 
 For fork scope and contribution rules, read [FORK.md](FORK.md), [AGENTS.md](AGENTS.md),
-and [CONTRIBUTING.md](CONTRIBUTING.md). The upstream project's contribution policies
+and [CONTRIBUTING.md](CONTRIBUTING.md). For automated checks and selective upstream
+updates, read [the maintenance procedure](docs/maintenance/README.md).
+The upstream project's contribution policies
 apply when submitting work upstream.
