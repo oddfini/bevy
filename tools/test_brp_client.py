@@ -95,16 +95,17 @@ class ClientTests(unittest.TestCase):
             Client(max_response_bytes=32).call("agent.state")
         stream.read.assert_called_once_with(33)
 
-    def test_deeply_nested_json_fails_as_protocol_error(self):
-        self.opener.open.return_value = response(b"[" * 2000 + b"0" + b"]" * 2000, raw=True)
-        with self.assertRaisesRegex(ProtocolError, "JSON"):
-            self.client.call("agent.state")
-        nested = []
-        for _ in range(2000):
-            nested = [nested]
+    def test_json_recursion_errors_become_protocol_errors(self):
+        # JSON recursion thresholds vary between Python implementations/versions.
+        # Exercise the error contract without assuming a particular nesting limit.
+        self.opener.open.return_value = response(self.envelope())
+        with patch("brp_client.json.loads", side_effect=RecursionError("nested response")):
+            with self.assertRaisesRegex(ProtocolError, "response JSON"):
+                self.client.call("agent.state")
         self.opener.open.reset_mock()
-        with self.assertRaisesRegex(ProtocolError, "request JSON"):
-            self.client.call("agent.act", {"value": nested})
+        with patch("brp_client.json.dumps", side_effect=RecursionError("nested request")):
+            with self.assertRaisesRegex(ProtocolError, "request JSON"):
+                self.client.call("agent.act", {"value": []})
         self.opener.open.assert_not_called()
 
     def test_counter_entrypoint_does_not_create_rust_workspace_cache_member(self):
