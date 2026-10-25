@@ -11,30 +11,32 @@ from pathlib import Path
 import platform
 import socket
 import subprocess
+import sys
 import tempfile
 import time
-import urllib.request
 
+# tools/* is a Rust workspace glob; local bytecode folders break Cargo metadata.
+sys.dont_write_bytecode = True
+from brp_client import Client, RpcError
 from maintenance import source_hashes
 
 
 ROOT = Path(__file__).resolve().parents[1]
 FEATURES = "ui,bevy_remote_client,bevy_feathers"
 URL = "http://127.0.0.1:15702/"
+CLIENT = Client(URL, timeout=5)
 
 
 def rpc(method, params=None, expected_error=None):
-    payload = json.dumps({"jsonrpc": "2.0", "id": 1, "method": method, "params": params}).encode()
-    request = urllib.request.Request(URL, payload, {"Content-Type": "application/json"})
-    with urllib.request.urlopen(request, timeout=5) as response:
-        message = json.load(response)
+    try:
+        result = CLIENT.call(method, params)
+    except RpcError as error:
+        if expected_error is not None and error.code == expected_error:
+            return error.error
+        raise RuntimeError(f"RPC failed: {error}") from error
     if expected_error is not None:
-        if message.get("error", {}).get("code") != expected_error:
-            raise RuntimeError(f"Expected RPC error {expected_error}, received {message}")
-        return message["error"]
-    if "error" in message or "result" not in message:
-        raise RuntimeError(f"RPC failed: {message}")
-    return message["result"]
+        raise RuntimeError(f"Expected RPC error {expected_error}, received a result")
+    return result
 
 
 def main():
