@@ -45,7 +45,7 @@ jobs:
           rustup override set 1.99.1
       - name: Test maintenance failures and source compatibility
         run: |
-          python3 -m unittest discover -s tools -p 'test_maintenance.py' -v
+          python3 -m unittest discover -s tools -p 'test_*.py' -v
           python3 tools/maintenance.py check
           git diff --check
       - name: Test the shared command transition without a renderer

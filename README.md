@@ -24,6 +24,28 @@ The example reuses the existing Bevy Remote Protocol. It adds no editor GUI or
 separate MCP server. Developer automation is local to this example; it is not a
 production multiplayer API.
 
+## Inspect a running local app
+
+The standard-library client in `tools/brp_client.py` can call existing Bevy Remote
+Protocol methods and an app's registered methods. Start the counter example, then:
+
+```sh
+python3 -B tools/brp_client.py agent.state
+python3 -B tools/brp_client.py agent.act --params '{"action":"increment","expectedRevision":0}'
+```
+
+Use `--url http://127.0.0.1:PORT/` for another local app. This development client
+accepts literal loopback HTTP addresses. It disables proxies and redirects,
+checks response IDs and JSON-RPC structure, bounds response size, and never retries
+a request automatically. After an action timeout, read the state before deciding
+whether another action is needed. An action can complete before its reply arrives.
+
+Keep game actions, private state projections, and game-specific replay comparisons
+in the game project. They can use this client without changing Bevy internals.
+Run Python with `-B` when importing these modules directly. A local `__pycache__`
+directory under `tools/` conflicts with the upstream Rust workspace glob. The
+counter entrypoint disables local bytecode before importing its helpers.
+
 Verified on macOS on 2026-10-25: seven focused unit tests, rejected-command checks,
 real pointer input, domain-state assertions, screenshot capture, and normal app
 exit passed. Missing binaries and a non-finite timeout correctly failed. Evidence:
@@ -42,7 +64,7 @@ before starting a windowed run.
 This fork tracks `Cargo.lock` so agents use the verified dependency resolution.
 
 ```sh
-python3 tools/agent-loop.py --output /tmp/agent-loop-first-run
+python3 -B tools/agent-loop.py --output /tmp/agent-loop-first-run
 ```
 
 The output directory must be new. The runner builds two examples, starts the app,

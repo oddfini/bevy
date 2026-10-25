@@ -44,6 +44,8 @@ is `downstream-ready`. Do not bypass branch protection, push directly to the
 verified branch, or enable inherited release/deployment workflows for convenience.
 
 Run the guard regressions and fast Rust model tests from `CONTRIBUTING.md`.
+Use Python `-B` for tools and tests. Entry points must disable local bytecode before
+importing helpers under `tools/`; `tools/*` also discovers Rust workspace members.
 When engine files change, use `maintenance.py test-engine --since` with the exact
 PR base SHA. This includes every changed package, including an upstream baseline
 update. When runtime inputs change, run `agent-loop.py` with its checks/build

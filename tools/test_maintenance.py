@@ -55,7 +55,7 @@ class MaintenanceTests(unittest.TestCase):
         with (self.root / "Cargo.toml").open("a") as manifest:
             manifest.write('\n# Downstream examples. Keep upstream examples and engine identifiers unchanged.\n'
                            '[[example]]\nname = "agent_demo"\npath = "examples/agent/demo.rs"\nrequired-features = []\n')
-        for name in ("Cargo.lock", "tools/agent-loop.py", "tools/maintenance.py", "examples/agent/demo.rs"):
+        for name in ("Cargo.lock", "tools/agent-loop.py", "tools/brp_client.py", "tools/maintenance.py", "examples/agent/demo.rs"):
             self.write(name, "fixture\n")
         self.image = self.root / "screenshot.png"
         self.image.write_bytes(PNG)
@@ -106,7 +106,7 @@ class MaintenanceTests(unittest.TestCase):
             gate.check_compatibility(self.root)
 
     def test_new_module_or_changed_driver_invalidates_evidence(self):
-        for name in ("examples/agent/new_model.rs", "tools/agent-loop.py"):
+        for name in ("examples/agent/new_model.rs", "tools/agent-loop.py", "tools/brp_client.py"):
             with self.subTest(name=name):
                 self.write(name, "new input\n")
                 with self.assertRaisesRegex(ValueError, "stale"):

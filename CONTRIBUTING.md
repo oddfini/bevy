@@ -37,7 +37,7 @@ tracked. Dependency changes belong in a separate, explained update.
 Fast checks:
 
 ```sh
-python3 -B -m unittest discover -s tools -p 'test_maintenance.py' -v
+python3 -B -m unittest discover -s tools -p 'test_*.py' -v
 python3 -B tools/maintenance.py check
 rustfmt --check --edition 2024 examples/agent/*.rs
 rustc --edition 2024 --test examples/agent/command_model.rs -o /tmp/command-model-tests

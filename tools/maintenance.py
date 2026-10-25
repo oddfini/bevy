@@ -140,7 +140,7 @@ def test_packages(root, policy, since=None):
 
 def source_hashes(root):
     policy = policy_at(root)
-    names = {POLICY, "Cargo.toml", "Cargo.lock", "tools/agent-loop.py", "tools/maintenance.py"}
+    names = {POLICY, "Cargo.toml", "Cargo.lock", "tools/agent-loop.py", "tools/brp_client.py", "tools/maintenance.py"}
     names.update(str(path.relative_to(root)) for path in (root / "examples/agent").rglob("*") if path.is_file())
     for patch in policy["patches"]:
         names.update(name for name, sha in patch["files"].items() if sha is not None)
