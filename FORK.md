@@ -31,11 +31,29 @@ documentation tests on macOS. Formatting passed. Clippy passed for all targets o
 this crate with warnings treated as errors. This is a focused engine check, not a
 whole-workspace or mobile-runtime validation.
 
+## Same-frame touch backport
+
+The fork backports [upstream PR #26077](https://github.com/bevyengine/bevy/pull/26077)
+by @mirsella, commit `6ef56e780ff11e802359b495067db8546a5f03fe`.
+The cherry-pick preserves the original author and commit reference.
+`crates/bevy_picking/src/events.rs` is byte-identical to that source; no adaptation
+was needed. The recorded upstream engine base remains unchanged.
+
+A touch can start and end in one update. Its release now uses the current hover
+hits when the same pointer and button had an unmatched press in that update.
+Other releases retain previous-frame targeting. Four regression cases cover
+same-frame and split-frame touch with fresh and stale hover maps. The existing
+button cleanup and activation tests also remain required.
+
+Focused engine checks cover `bevy_picking` and `bevy_ui_widgets`. Native agent-loop
+and game/device evidence remain separate requirements before changing a game pin.
+
 ## Upstream compatibility policy
 
 Preserve Bevy's internal names, module layout, and public APIs. Prefer separate
 tools, downstream examples, and plugins for new development capabilities. The
-current engine-internal difference is the button cleanup fix and its tests.
+current engine-internal differences are the button cleanup fix and the same-frame
+touch backport, with their regression tests.
 
 Our examples live under `examples/agent/`; both original remote example files are
 preserved byte-for-byte from the engine base. Cargo only adds their downstream
@@ -49,10 +67,10 @@ history rather than undoing the old fix commit.
 
 ## Game integration
 
-The existing Teratorn Bevy game prototype still uses released Bevy 0.20.0. Creating
-this fork does not switch that application's engine dependency. Pin any future
-integration to an exact tested revision and compare its game results with the
-existing C# reference.
+Teratorn currently pins the verified fork revision
+`728db979c0ba0ef125ffa5c804e4cb70e476279b`. This backport does not change that
+application pin. A later game update needs an exact tested engine revision and
+regression evidence against the existing C# reference.
 
 ## Agent command loop
 
