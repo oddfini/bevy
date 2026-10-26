@@ -6,7 +6,7 @@
     {"name": "agent_control_app", "path": "examples/agent/control_app.rs", "required-features": ["bevy_remote", "bevy_feathers"]},
     {"name": "agent_control_test", "path": "examples/agent/control_test.rs", "required-features": ["bevy_remote_client", "bevy_feathers"]}
   ],
-  "testPackages": ["bevy_ui_widgets"],
+  "testPackages": ["bevy_picking", "bevy_ui_widgets"],
   "patches": [
     {
       "id": "disabled-button-cleanup",
@@ -17,6 +17,17 @@
       "regression": "Six tests in crates/bevy_ui_widgets/src/button.rs cover cleanup and preserve disabled activation guards.",
       "files": {
         "crates/bevy_ui_widgets/src/button.rs": "55aaf526008ef682ea95c4440d0789e231580b000769d92358302b9bcfe9015e"
+      }
+    },
+    {
+      "id": "same-frame-touch-tap",
+      "origin": "upstream",
+      "source": "6ef56e780ff11e802359b495067db8546a5f03fe",
+      "status": "active",
+      "reason": "Same-frame touch presses and releases must emit PointerClick and PointerRelease, while held presses keep previous-frame targeting.",
+      "regression": "touch_started_and_ended_in_one_frame covers same-frame and split-frame native touch with fresh and stale previous hover maps. Existing button activation and cleanup regressions remain required.",
+      "files": {
+        "crates/bevy_picking/src/events.rs": "bac8bc66d766f911f79da1087fc47e2829d44dd2032436029915d83fc57af4b0"
       }
     }
   ]
