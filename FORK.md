@@ -67,10 +67,11 @@ history rather than undoing the old fix commit.
 
 ## Game integration
 
-Teratorn currently pins the verified fork revision
-`728db979c0ba0ef125ffa5c804e4cb70e476279b`. This backport does not change that
-application pin. A later game update needs an exact tested engine revision and
-regression evidence against the existing C# reference.
+The separate Teratorn prototype pins the tested fork revision
+`728db979c0ba0ef125ffa5c804e4cb70e476279b`. Its game rules, assets, and C# comparison
+artifacts remain in the game project. Engine updates require a new tested pin and
+game regression evidence. Tool-only updates do not require changing the engine pin.
+This backport does not change the application pin.
 
 ## Agent command loop
 
@@ -78,6 +79,10 @@ The downstream examples share a counter transition between `agent.act` and real 
 input. `agent.state` exposes revisions and legal actions. Rejected commands must
 preserve state. `tools/agent-loop.py` builds and exercises the examples and writes
 structured results, process logs, and a native screenshot.
+
+`tools/brp_client.py` supplies the shared local HTTP client for the counter runner
+and real-game scenario tools. It validates the protocol and request ID before
+returning a result. Game-specific behavior stays outside the engine repository.
 
 The toolkit README describes the downstream workflow. The original Bevy README is
 preserved in `UPSTREAM_README.md`. A new product name has not been selected; engine
