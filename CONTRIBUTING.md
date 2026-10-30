@@ -1,6 +1,6 @@
 # Contributing to this fork
 
-For work submitted to `yongjip/bevy`, read [FORK.md](FORK.md) and
+For work submitted to `oddfini/bevy`, read [FORK.md](FORK.md) and
 [AGENTS.md](AGENTS.md). AI-assisted code, tests, and prose are allowed in this
 fork. Keep changes focused and include verification evidence.
 
@@ -9,18 +9,22 @@ fork. Keep changes focused and include verification evidence.
 1. Read the current code and reproduce the problem. Record the expected result.
 2. Create a `codex/` task branch. Keep one behavior change in each PR. Separate
    upstream backports, engine fixes, and development features.
-3. Use public Bevy APIs first. Keep game rules and private assets in the game repo.
-   An internal engine fix needs a regression test and a patch record in
-   `docs/maintenance/policy.json`. Preserve crate names and public APIs.
+3. Reuse existing APIs when they fit. Independent engine features and API changes
+   are welcome with a concrete requirement, affected-consumer analysis, regressions,
+   and recovery steps. Keep game rules and private assets in the game repo.
+   Record internal changes in `docs/maintenance/policy.json`. Current package-name,
+   provenance, and structural guards still apply; change a guard only through its
+   own reviewed change with negative regressions.
 4. Run the fast checks below. For engine changes, run `test-engine` against the
    PR's exact base commit. For runtime changes, run and record the native driver.
 5. Review the diff. Check rejected commands, existing behavior, dependencies,
    error handling, and test failures. Report any platform that was not tested.
-6. Open a PR against `yongjip/bevy:codex/teratorn-ai`. Use the fork's PR template.
+6. Open a PR against `oddfini/bevy:codex/teratorn-ai`. Use the fork's PR template.
    Merge after `downstream-ready` passes and review discussions are resolved.
 
-AI may write and maintain code, tests, and prose in this fork. State how it was
-used. Do not claim an independent review when the implementing agent reviewed its
+AI may write and maintain code, tests, commit messages, and PR prose in this fork.
+The owner does not need to manually rewrite each contribution. State how AI was
+used and who implemented and reviewed the change. Do not claim an independent review when the implementing agent reviewed its
 own code. A passing receipt records an observed run; it is not a trusted attestation
 against a contributor who changes both the code and its evidence.
 
@@ -74,6 +78,11 @@ and maintenance pipeline changes also run engine package checks.
 Native macOS evidence remains a local run. Rendering, input,
 and platform changes need their own relevant runtime checks. This counter example
 does not establish Teratorn, mobile, performance, or whole-engine compatibility.
+
+Reuse passing checks while their code, configuration, toolchain, and evidence
+inputs remain valid. Respect the task's cost limits and allowed execution targets.
+A required hosted status cannot be replaced with an invented local success or a
+branch-protection bypass. Report a blocked check and keep the PR unmerged.
 
 ## Adopt upstream work
 

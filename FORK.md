@@ -1,18 +1,27 @@
-# Teratorn development fork
+# Oddfini's independent Bevy fork
 
-This is an experimental fork maintained in `yongjip/bevy`. It is separate from
+This is an independently maintained engine fork in `oddfini/bevy`. It is separate from
 the official [Bevy project](https://github.com/bevyengine/bevy).
 
-The goal is an AI-assisted game development and maintenance toolkit, using Bevy as
-its runtime and Teratorn as its first real game. Keep a small downstream patch set
-so upstream updates remain reviewable. Development tools and engine changes belong
-here; game rules and private game assets do not.
+The owner selected this direction on 2026-10-30: reuse Bevy as the starting point,
+then choose our own roadmap, engine designs, and contribution policy. AI may implement
+changes and prepare commits and PRs. Actual review and verification govern adoption.
+Official upstream acceptance is not required for our development decisions.
+
+Teratorn is the first real game used to validate the engine. Shared development
+tools and engine features belong here; game rules, private assets, accounts, and
+service credentials stay in their game projects. Grow from working subsystems and
+replace modules when a demonstrated limit justifies the work. A complete engine
+rewrite is not the current plan. See [the roadmap](docs/independent-engine-roadmap.md).
 
 ## Branches and license
 
-- `main`: upstream-derived reference branch. Update it separately from experiments.
-- `codex/teratorn-ai`: initial downstream experiment.
+- `main`: existing upstream-derived reference branch.
+- `codex/teratorn-ai`: current default and verified integration branch, despite its historical name.
 - Initial engine base: `3a796854abd94144c6e08c4112e5bd9229392b37`.
+
+This decision does not rename branches, change package identifiers, or update any
+game's engine pin. Branch transitions require a separate reviewed change.
 
 The original MIT OR Apache-2.0 licensing and third-party terms remain in place.
 See `LICENSE-MIT`, `LICENSE-APACHE`, the original README, and individual crates.
@@ -48,30 +57,40 @@ button cleanup and activation tests also remain required.
 Focused engine checks cover `bevy_picking` and `bevy_ui_widgets`. Native agent-loop
 and game/device evidence remain separate requirements before changing a game pin.
 
-## Upstream compatibility policy
+## Engine evolution policy
 
-Preserve Bevy's internal names, module layout, and public APIs. Prefer separate
-tools, downstream examples, and plugins for new development capabilities. The
-current engine-internal differences are the button cleanup fix and the same-frame
-touch backport, with their regression tests.
+The engine roadmap is independent. We may accept a different internal design or
+public API when it solves a concrete requirement and passes the relevant checks.
+Compatibility remains useful where it reduces maintenance cost; it does not give
+upstream a veto over our features. Keep each change reviewable, record its affected
+consumers, and provide migration and recovery steps when behavior or APIs change.
+
+Current machine protections still preserve package names, original examples,
+upstream provenance, the root Cargo prefix, and inherited workflow files. New
+protected-structure changes need an explicit guard and regression update. This
+document does not make an unrecorded engine edit pass. The currently recorded
+engine differences remain the button cleanup fix and same-frame touch backport.
 
 Our examples live under `examples/agent/`; both original remote example files are
 preserved byte-for-byte from the engine base. Cargo only adds their downstream
 example targets. Keep core patches isolated from tooling and documentation commits.
 
-Evaluate an upstream revision on a task branch, run affected regression tests and
-the agent loop, then pin the verified revision. Check Teratorn's compatibility before
+Select upstream revisions when they benefit our roadmap. Evaluate each exact revision
+on a task branch, run affected regression tests and required native checks, then
+promote the verified revision. Check Teratorn's compatibility before
 changing its engine dependency. Mark a downstream fix as superseded after verifying
 an equivalent upstream implementation. Preserve the fixed behavior and published
 history rather than undoing the old fix commit.
 
 ## Game integration
 
-The separate Teratorn prototype pins the tested fork revision
-`728db979c0ba0ef125ffa5c804e4cb70e476279b`. Its game rules, assets, and C# comparison
-artifacts remain in the game project. Engine updates require a new tested pin and
+The original separate Teratorn prototype used the tested revision
+`728db979c0ba0ef125ffa5c804e4cb70e476279b`; this is a historical baseline.
+The game's own `clients/bevy/engine.json`, manifest, and lockfile record its current
+pin. Its game rules, assets, and C# comparison artifacts remain there.
+Engine updates require a new tested game pin and
 game regression evidence. Tool-only updates do not require changing the engine pin.
-This backport does not change the application pin.
+Publishing an engine change does not by itself change an application pin or authorize a release.
 
 ## Agent command loop
 

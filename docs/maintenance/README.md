@@ -1,9 +1,10 @@
 # Maintaining the downstream fork
 
-The verified engine base and internal patches are recorded in
-[policy.json](policy.json). Development features belong in separate tools,
-`examples/agent/`, or public-API plugins. Keep the upstream internals unchanged
-except for recorded fixes and selected upstream changes.
+The verified engine base and internal changes are recorded in
+[policy.json](policy.json). This independently maintained fork may accept its own
+engine designs, APIs, and development features. Reuse tools, `examples/agent/`, and
+plugins where they fit. Record engine changes and their consumer impact; upstream
+acceptance is not a promotion condition. See [the roadmap](../independent-engine-roadmap.md).
 
 ## Controls
 
@@ -13,6 +14,8 @@ except for recorded fixes and selected upstream changes.
 - The same check preserves upstream package names, original remote examples,
   license files, credits, upstream README, and existing workflow files. The root
   Cargo manifest may only append the recorded downstream example targets.
+  These are current machine protections, not an already-removed compatibility
+  policy. A protected-structure change needs a reviewed guard change and negative tests.
 - Native receipts bind the base/patch policy, manifests, lockfile, every downstream
   example file, driver, and gate to their source hashes. They also bind screenshot
   contents and dimensions. Sources changing during a run make that run fail.
@@ -37,9 +40,23 @@ they do not replace review or protect against an owner changing the controls.
 Check hosted settings after changing the workflow or repository configuration:
 
 ```sh
-gh api repos/yongjip/bevy/actions/workflows
-gh api repos/yongjip/bevy/branches/codex%2Fteratorn-ai/protection
+gh api repos/oddfini/bevy/actions/workflows
+gh api repos/oddfini/bevy/branches/codex%2Fteratorn-ai/protection
 ```
+
+## Propose an independent change
+
+Start from the verified integration branch and create a `codex/` task branch.
+Record the current base SHA, the observed requirement, intended behavior, affected
+packages and consumers, regression checks, and recovery steps. A downstream change
+does not need an upstream PR or original upstream implementation. Record its own
+source commit with `origin: downstream`; keep the existing file-hash and adaptation
+rules. An API change also needs a migration or an explicit supported-consumer boundary.
+
+Keep the implementation, review, and observed validation roles clear when agents
+perform the work. Do not report self-review as independent review. A contribution
+task does not authorize new spending, credentials, provider actions, game pin
+changes, or store releases outside its approved scope.
 
 ## Select an upstream change
 

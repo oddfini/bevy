@@ -1,8 +1,9 @@
-# AI-assisted game development and maintenance
+# Oddfini's independent Bevy fork
 
-An experimental Rust toolkit for agents that build, run, inspect, and verify games.
-This fork uses Bevy as its runtime. It keeps developer-facing GUI work small and
-prioritizes commands, structured state, repeatable runs, and evidence.
+An independently maintained Rust engine fork for AI-assisted game development.
+Bevy supplies the starting runtime; Oddfini chooses the roadmap and accepts
+verified engine and tooling changes under its own contribution policy.
+We prioritize commands, structured state, repeatable runs, and evidence.
 
 This is an early prototype. The product name is not yet selected. The GitHub
 repository and internal Rust package names currently remain unchanged.
@@ -10,8 +11,8 @@ repository and internal Rust package names currently remain unchanged.
 ## First working slice
 
 The remote example is a small counter with one shared transition for an agent
-command and a real UI click. It is a test of the development workflow, not a new
-game engine or a completed Teratorn migration.
+command and a real UI click. It tests the development workflow. This example does
+not establish a completed engine, Teratorn migration, or mobile qualification.
 
 - `agent.state` returns the current revision, counter, and legal actions.
 - `agent.act` checks the action and expected revision before changing state.
@@ -97,16 +98,18 @@ player-facing UI, accessibility, and platform integration in the game project.
 Add development capabilities when a concrete workflow needs them. Data-driven
 layout editing and direct Teratorn integration are future work.
 
-Preserve Bevy's internal names, public APIs, module layout, and original examples.
-Our examples live under `examples/agent/`. New development features belong in tools
-or plugins using public APIs. Keep necessary core bug fixes small and isolated.
-Test upstream updates on a task branch before changing a verified engine revision;
-see [the compatibility policy](FORK.md#upstream-compatibility-policy).
+Reuse working engine subsystems and add tools or plugins where they fit. Internal
+designs and public APIs may evolve for demonstrated requirements, with regression,
+consumer-impact, and recovery evidence. Current machine guards and original source
+attribution remain enforced. Our examples live under `examples/agent/`.
+Select upstream updates on task branches before changing a verified engine revision;
+see [the engine policy](FORK.md#engine-evolution-policy) and
+[independent roadmap](docs/independent-engine-roadmap.md).
 
 ## Origin and license
 
-Based on [Bevy](https://github.com/bevyengine/bevy), with a small downstream patch
-set. This is an independent experiment maintained in `yongjip/bevy`.
+Based on [Bevy](https://github.com/bevyengine/bevy). This independent fork is
+maintained in `oddfini/bevy`; it is not an official Bevy distribution.
 
 The engine source retains its MIT OR Apache-2.0 licensing, original copyright
 notices, and applicable third-party terms. See [LICENSE-MIT](LICENSE-MIT),
