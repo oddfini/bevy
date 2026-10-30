@@ -72,6 +72,12 @@ The output directory must be new. The runner builds two examples, starts the app
 executes accepted and rejected actions, runs the pointer/capture client, and stops
 the app. It exits nonzero on a failed check and writes `summary.json`.
 
+Startup polling rejects `agent.state` replies that return at or after its deadline
+and starts no further request once the budget is exhausted. Socket waits and retry
+sleeps use the remaining startup budget; the shared client timeout is restored
+after polling. Socket timeouts apply per I/O wait: slowly streamed response bodies
+still have no absolute total HTTP wall-clock cancellation.
+
 Use `--offline` with a populated Cargo cache. The driver runs formatting, focused
 tests, Clippy, and a locked build before the native run. `CARGO_TARGET_DIR` selects
 the binary directory. `--skip-build` produces diagnostic evidence that the

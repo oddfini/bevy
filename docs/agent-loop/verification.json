@@ -17,7 +17,7 @@
     },
     "exampleTests": {
       "command": [
-        "cargo",
+        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
         "test",
         "--locked",
         "--no-default-features",
@@ -33,7 +33,7 @@
     },
     "clippy": {
       "command": [
-        "cargo",
+        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
         "clippy",
         "--locked",
         "--no-default-features",
@@ -54,7 +54,7 @@
     },
     "build": {
       "command": [
-        "cargo",
+        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
         "build",
         "--locked",
         "--no-default-features",
@@ -71,8 +71,8 @@
       "exitCode": 0
     }
   },
-  "verifiedDate": "2026-10-26",
-  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "verifiedDate": "2026-10-30",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
   "sourceSha256": {
     "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64",
     "Cargo.toml": "d527e2edf03fade28ae3c3c6accaed37ed3cbd7fa01ac921cbdb907d189ffe1b",
@@ -82,17 +82,17 @@
     "examples/agent/command_model.rs": "b5769b01eab2fabc7017a252e7aa704cbb524c9c323b1da4a7ff2d3021ce0b95",
     "examples/agent/control_app.rs": "951c89d4e7aeb90c4719c783098e443925df8574cd4b65a48162bf2f5448193b",
     "examples/agent/control_test.rs": "1550f1b42b2b9c610ea9d6cca503963ed586474745f816e022361355a58fa590",
-    "tools/agent-loop.py": "4549eff439a6a31ecbeeb04598795fb4bcd95ea102ffe04a7bf324e8f642d1c3",
+    "tools/agent-loop.py": "f1858c1c8114948b6ef2bee207afbca315e144203093bf2ed9714985334da5b3",
     "tools/brp_client.py": "3e50aac3917cdbb8d461e990319f0db7900344f19897b0464f61af0af28b051d",
     "tools/maintenance.py": "1a2c3305380c987c160d8cf84fdfe5705e0c5c9578d6023a7a66c638b44b4d7d"
   },
   "cargoVersion": "cargo 1.99.1 (5f94df478 2026-08-27)",
   "rustcVersion": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
   "binarySha256": {
-    "agent_control_app": "7d4a8d194b99773922227e4290c29e70ce436af9019b13ab362fa67dacb5a457",
-    "agent_control_test": "ea8ff118c53580ae41967dc27a09975e2b673d5cac7d9efa637b7bc647ec603e"
+    "agent_control_app": "41d840231110f3ff32bfb8c305eb6bdc771cb3d4092cdf93d3882bcaa0d25ced",
+    "agent_control_test": "0676376f7114239343ad442c1bc13b869ce12281e3c218f49f141c2a4d6b3cd6"
   },
-  "screenshotSha256": "c866b3634c8622ef2dc32051382b9bb1362983e8a95fb330af6117da9de7a349",
+  "screenshotSha256": "f848df5121744ecf05ee3b3be6ebcf845aa78c52741601f02aff181a53dd0ee9",
   "initial": {
     "count": 0,
     "legalActions": [
@@ -147,9 +147,9 @@
     "ok": true,
     "schema": 1,
     "screenshot": {
-      "height": 1440,
+      "height": 720,
       "path": "screenshot.png",
-      "width": 2560
+      "width": 1280
     }
   }
 }

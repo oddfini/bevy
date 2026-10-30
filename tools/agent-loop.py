@@ -96,16 +96,29 @@ def main():
             server = subprocess.Popen([str(examples / ("agent_control_app" + suffix))],
                                       cwd=ROOT, stdout=app_log, stderr=subprocess.STDOUT)
             deadline = time.monotonic() + min(args.timeout, 60)
-            while True:
-                if server.poll() is not None:
-                    raise RuntimeError(f"App exited before startup: {server.returncode}")
-                try:
-                    initial = rpc("agent.state")
-                    break
-                except (OSError, ValueError, RuntimeError):
+            socket_timeout = CLIENT.timeout
+            try:
+                while True:
+                    if server.poll() is not None:
+                        raise RuntimeError(f"App exited before startup: {server.returncode}")
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        raise RuntimeError("App did not expose agent.state before timeout")
+                    # Socket waits are bounded; a streamed response still has no total HTTP deadline.
+                    CLIENT.timeout = min(socket_timeout, remaining)
+                    try:
+                        initial = rpc("agent.state")
+                    except (OSError, ValueError, RuntimeError):
+                        remaining = deadline - time.monotonic()
+                        if remaining <= 0:
+                            raise RuntimeError("App did not expose agent.state before timeout")
+                        time.sleep(min(0.1, remaining))
+                        continue
                     if time.monotonic() >= deadline:
                         raise RuntimeError("App did not expose agent.state before timeout")
-                    time.sleep(0.1)
+                    break
+            finally:
+                CLIENT.timeout = socket_timeout
             if initial["count"] != 0 or initial["revision"] != 0:
                 raise RuntimeError("The demo did not start from its declared initial state")
             updated = rpc("agent.act", {"action": "increment", "expectedRevision": 0})
