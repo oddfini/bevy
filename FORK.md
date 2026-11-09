@@ -119,3 +119,45 @@ AI-assisted implementation, tests, and prose are allowed for this fork. Contribu
 remain responsible for review and verification. See `AGENTS.md` for the working
 instructions. Upstream Bevy has its own contribution and AI policies, which apply
 when submitting work there.
+
+## Bevy 0.20.1 fixes on the existing base (2026-11-10)
+
+The owner selected selective fixes, retaining our development base and existing
+fork changes. This is not a switch to the stable release tree. Package versions
+stay `0.20.0-dev`; do not describe this fork as the unmodified 0.20.1 release.
+The release commit is `a0577b5c6a7b208719dd761c5c6a7a539e472a97`.
+See [the exact intake record](docs/maintenance/releases/0.20.1.json).
+
+Seven of the release's nine functional fixes already have identical patch IDs
+in the retained history. They are not applied or tested as new changes again.
+The release packaging/version bump is omitted because this is a selective intake.
+Two missing fixes retain their original authors and `cherry-pick -x` provenance:
+
+- `334ea201fa60035915f4b7f21f00091d4600fc8a`: prevent generated BSN struct
+  defaults from producing false `clippy::needless_update` diagnostics. Its
+  upstream regression produced two diagnostics before the generator fix.
+  The allowance is scoped to generated construction; crate-wide Clippy flags
+  are not relaxed.
+- `1c1a02a9316f7844ac003bdb587c1d447c7dc13a`: draw fog volumes that reach the
+  near plane, using a clipped ray interval for perspective and orthographic
+  projections. Retain the upstream rotated orthographic negative regression.
+
+The existing disabled-button cleanup and same-frame touch patches remain active.
+No dependencies, package names, engine base, game assets or game pins change here.
+Policy package checks cover `bevy_pbr`, `bevy_scene`, `bevy_picking` and
+`bevy_ui_widgets`. The nested `bevy_scene_macros` package is also checked explicitly:
+its manifest is inside `crates/bevy_scene/macros/`, outside the selector's direct
+`crates/<package>` layout. The original protection/selection rules stay intact.
+
+Native agent-loop proof covers the shared counter's input, commands and capture.
+It does not qualify the fog's rendered image, a physical phone, Teratorn gameplay,
+or performance. Game adoption is separate and keeps the old verified pin until
+an engine PR has actually met its required checks. Hosted checks are not replaced
+with invented local statuses. Existing CI/spending restrictions still apply.
+
+Local validation on macOS with Rust 1.99.1 passed 227 engine unit tests, 42
+engine documentation tests and 42 maintenance-tool tests. The upstream examples
+retain 23 ignored documentation cases; these were not reported as passes.
+The native agent example passed its seven tests, Clippy and locked build, then
+verified accepted/rejected commands, an actual UI click, a source-bound screenshot
+and clean process exit. These results do not replace the required hosted status.
