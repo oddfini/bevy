@@ -17,7 +17,7 @@
     },
     "exampleTests": {
       "command": [
-        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
+        "cargo",
         "test",
         "--locked",
         "--no-default-features",
@@ -33,7 +33,7 @@
     },
     "clippy": {
       "command": [
-        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
+        "cargo",
         "clippy",
         "--locked",
         "--no-default-features",
@@ -54,7 +54,7 @@
     },
     "build": {
       "command": [
-        "/Users/yongjip/Projects/teratorn/.mergetrain/teratorn/sdk/rust-1.99.1/bin/cargo",
+        "cargo",
         "build",
         "--locked",
         "--no-default-features",
@@ -71,14 +71,18 @@
       "exitCode": 0
     }
   },
-  "verifiedDate": "2026-10-30",
+  "verifiedDate": "2026-11-09",
   "platform": "macOS-27.0.1-arm64-arm-64bit",
   "sourceSha256": {
     "Cargo.lock": "42d31499bf923e55deb00bbd2315d1fb3626c81e71e4590be63f009a62e15d64",
     "Cargo.toml": "d527e2edf03fade28ae3c3c6accaed37ed3cbd7fa01ac921cbdb907d189ffe1b",
+    "crates/bevy_pbr/src/volumetric_fog/render.rs": "ed6cc029538cfa55ddf0224010dc123305ec1a2853736e24b556dc5cdbf92f2c",
+    "crates/bevy_pbr/src/volumetric_fog/volumetric_fog.wesl": "8f90dc6dbf91a2185da9c38ce9aecebada8a1852000442ecfbdacbd1d4f9b227",
     "crates/bevy_picking/src/events.rs": "bac8bc66d766f911f79da1087fc47e2829d44dd2032436029915d83fc57af4b0",
+    "crates/bevy_scene/macros/src/bsn/codegen.rs": "70a265f074903a28c9ee10fb545b7e40ac6467e089349664d25b066678f60f7b",
+    "crates/bevy_scene/src/lib.rs": "d64e7d2e457820c201d465faa2a2542fa3fe9507426ccf42d693ef36bd207ee2",
     "crates/bevy_ui_widgets/src/button.rs": "55aaf526008ef682ea95c4440d0789e231580b000769d92358302b9bcfe9015e",
-    "docs/maintenance/policy.json": "a9ccff590826a903a05e38b3aeb9ec7174a885223172c67df6dc05d65eb3fe03",
+    "docs/maintenance/policy.json": "7d21597ce7ef026922b62d1047207c7f60e0262d870c72ea088e561fdd8ddf6c",
     "examples/agent/command_model.rs": "b5769b01eab2fabc7017a252e7aa704cbb524c9c323b1da4a7ff2d3021ce0b95",
     "examples/agent/control_app.rs": "951c89d4e7aeb90c4719c783098e443925df8574cd4b65a48162bf2f5448193b",
     "examples/agent/control_test.rs": "1550f1b42b2b9c610ea9d6cca503963ed586474745f816e022361355a58fa590",
@@ -89,10 +93,10 @@
   "cargoVersion": "cargo 1.99.1 (5f94df478 2026-08-27)",
   "rustcVersion": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
   "binarySha256": {
-    "agent_control_app": "41d840231110f3ff32bfb8c305eb6bdc771cb3d4092cdf93d3882bcaa0d25ced",
-    "agent_control_test": "0676376f7114239343ad442c1bc13b869ce12281e3c218f49f141c2a4d6b3cd6"
+    "agent_control_app": "4230fbf9a9d637725fef5bc527ed1999764d8c4e85165c815b5d16b0d2189eb9",
+    "agent_control_test": "5eedd37cc88e187afc4d01bcb0cf57a9a0179cf55070db11f07c52282f9c11e6"
   },
-  "screenshotSha256": "f848df5121744ecf05ee3b3be6ebcf845aa78c52741601f02aff181a53dd0ee9",
+  "screenshotSha256": "c866b3634c8622ef2dc32051382b9bb1362983e8a95fb330af6117da9de7a349",
   "initial": {
     "count": 0,
     "legalActions": [
@@ -147,9 +151,9 @@
     "ok": true,
     "schema": 1,
     "screenshot": {
-      "height": 720,
+      "height": 1440,
       "path": "screenshot.png",
-      "width": 1280
+      "width": 2560
     }
   }
 }

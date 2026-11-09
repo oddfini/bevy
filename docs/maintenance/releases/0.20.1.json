@@ -1,0 +1,134 @@
+{
+  "schema": 1,
+  "release": "v0.20.1",
+  "releaseCommit": "a0577b5c6a7b208719dd761c5c6a7a539e472a97",
+  "mode": "selective-fixes-on-existing-development-base",
+  "basePreserved": "3a796854abd94144c6e08c4112e5bd9229392b37",
+  "packageVersionUnchanged": "0.20.0-dev",
+  "ownerSelected": "Preserve development changes and integrate0.20.1 fixes; not a stable-baseline replacement",
+  "functionalFixes": 9,
+  "alreadyPresent": 7,
+  "newBackports": 2,
+  "releasePackagingSkipped": true,
+  "commits": [
+    {
+      "source": "a0577b5c6a7b208719dd761c5c6a7a539e472a97",
+      "subject": "Release 0.20.1",
+      "alreadyInHistory": [],
+      "status": "not-applied-release-package-versioning-only"
+    },
+    {
+      "source": "1c1a02a9316f7844ac003bdb587c1d447c7dc13a",
+      "subject": "Fix fog volumes disappearing when the camera is within near-plane distance of the volume (#25336)",
+      "alreadyInHistory": [],
+      "appliedCommit": "93ec32ed2270a2971a33517b68e61caefc9a7cbf",
+      "sourcePatchId": "42e09540bc1de056a497628857a45b3ddd0a4bab",
+      "appliedPatchId": "42e09540bc1de056a497628857a45b3ddd0a4bab",
+      "patchEquivalent": true,
+      "status": "backported",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "334ea201fa60035915f4b7f21f00091d4600fc8a",
+      "subject": "Supress `clippy::needless_update` in bsn. (#26204)",
+      "alreadyInHistory": [],
+      "appliedCommit": "b02777622b355b2510acdf4a751aec991b0da708",
+      "sourcePatchId": "eccaac0bb0eca9a36295a468b6f36307ea913218",
+      "appliedPatchId": "eccaac0bb0eca9a36295a468b6f36307ea913218",
+      "patchEquivalent": true,
+      "status": "backported",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "ab3eab64b1093662175dc95dda46ee768b6e5e58",
+      "subject": "Remove cyclic shader dependency in `bevy_render` (#26254)",
+      "alreadyInHistory": [
+        "84e2d2cc5adaeff7547e44f434a0d0d7a20345b8\tRemove cyclic shader dependency in `bevy_render` (#26254)"
+      ],
+      "sourcePatchId": "40157a41df3210e1da661a96a0c3860e5c8e2995",
+      "existingPatchId": "40157a41df3210e1da661a96a0c3860e5c8e2995",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "b6e088629fcb8145e706bae59d0cda44061b88a6",
+      "subject": "Fix unneeded uniqueness check in parallel query iterators (#26135)",
+      "alreadyInHistory": [
+        "c01a7fa4a2a34b9e52f2598cd8a072dc75ab07d0\tFix unneeded uniqueness check in parallel query iterators (#26135)"
+      ],
+      "sourcePatchId": "82c05cab7fb1c40dc7d577453ceaf34387bf936c",
+      "existingPatchId": "82c05cab7fb1c40dc7d577453ceaf34387bf936c",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "10f7db91303aedf5f8eaa05983c038346dc8547d",
+      "subject": "Stop sending orphaned entity IDs through ancestor-chain traversal (#25419)",
+      "alreadyInHistory": [
+        "c38fa547bf232b29a6a8c0688876e4eb1347e504\tStop sending orphaned entity IDs through ancestor-chain traversal (#25419)"
+      ],
+      "sourcePatchId": "32724d0a6d662416fb21203a826c095540b16539",
+      "existingPatchId": "32724d0a6d662416fb21203a826c095540b16539",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "4e52d592bd3e617520693fe078b7f39ca0ba5f84",
+      "subject": "Register ReflectDefault for Option<T> (#26050)",
+      "alreadyInHistory": [
+        "12a94e0cd6b18df7a0dc2e5a202a55156d80e9a6\tRegister ReflectDefault for Option<T> (#26050)"
+      ],
+      "sourcePatchId": "5fef37eccb086169af669833188882e2a8989481",
+      "existingPatchId": "5fef37eccb086169af669833188882e2a8989481",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "8b6bc34ba4dbb32eca3910eea10e4319947657b9",
+      "subject": "fix UninitBufferVec to use shader's size for each entry instead of Ru\u2026 (#26090)",
+      "alreadyInHistory": [
+        "48ae9fc0a1a445dba9f3c5fe55fb5d8de3186ac7\tfix UninitBufferVec to use shader's size for each entry instead of Ru\u2026 (#26090)"
+      ],
+      "sourcePatchId": "d5297e7d8276606b15e20db4f65516b51b556d85",
+      "existingPatchId": "d5297e7d8276606b15e20db4f65516b51b556d85",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "674c8ca4923c0a563b8efc6c929aeed084184f60",
+      "subject": "Disable default features for `serde` in `bevy_utils` (#26108)",
+      "alreadyInHistory": [
+        "044fcef03879b5bae893cfb2e19fad2235e89239\tDisable default features for `serde` in `bevy_utils` (#26108)"
+      ],
+      "sourcePatchId": "ec5c396f79261f54889183bf7e97a21f15f4fdff",
+      "existingPatchId": "ec5c396f79261f54889183bf7e97a21f15f4fdff",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": true
+    },
+    {
+      "source": "bc210a25a621754c4f08355217d791dd2b1d88b3",
+      "subject": "Update ruzstd requirement from 0.8.0 to 0.9.0 (#25753)",
+      "alreadyInHistory": [
+        "844390b279c6ef252d10df2a17912761325db7f2\tUpdate ruzstd requirement from 0.8.0 to 0.9.0 (#25753)"
+      ],
+      "sourcePatchId": "6dd11b00a9fe811c6bfadc62ff3e4e0abf8bcdc7",
+      "existingPatchId": "6dd11b00a9fe811c6bfadc62ff3e4e0abf8bcdc7",
+      "patchEquivalent": true,
+      "status": "already-present",
+      "currentTreeReversePatchCheck": false,
+      "currentBehaviorCheck": {
+        "pass": true,
+        "requirement": "0.9.0",
+        "lockedVersion": "0.9.1",
+        "manifestSha256": "be837049f6c92397d067592acc737a90c2d86f4a288c460056fc9c696a9befc0",
+        "explanation": "Full reverse-hunk context differs because later retained zstd0.14.0/HDR changes surround the line. The original patch ID and required ruzstd0.9.0 line remain, with0.9.1 locked; no dependency update applied."
+      }
+    }
+  ]
+}

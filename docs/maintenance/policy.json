@@ -3,10 +3,29 @@
   "upstream": "https://github.com/bevyengine/bevy",
   "base": "3a796854abd94144c6e08c4112e5bd9229392b37",
   "examples": [
-    {"name": "agent_control_app", "path": "examples/agent/control_app.rs", "required-features": ["bevy_remote", "bevy_feathers"]},
-    {"name": "agent_control_test", "path": "examples/agent/control_test.rs", "required-features": ["bevy_remote_client", "bevy_feathers"]}
+    {
+      "name": "agent_control_app",
+      "path": "examples/agent/control_app.rs",
+      "required-features": [
+        "bevy_remote",
+        "bevy_feathers"
+      ]
+    },
+    {
+      "name": "agent_control_test",
+      "path": "examples/agent/control_test.rs",
+      "required-features": [
+        "bevy_remote_client",
+        "bevy_feathers"
+      ]
+    }
   ],
-  "testPackages": ["bevy_picking", "bevy_ui_widgets"],
+  "testPackages": [
+    "bevy_pbr",
+    "bevy_picking",
+    "bevy_scene",
+    "bevy_ui_widgets"
+  ],
   "patches": [
     {
       "id": "disabled-button-cleanup",
@@ -29,6 +48,32 @@
       "files": {
         "crates/bevy_picking/src/events.rs": "bac8bc66d766f911f79da1087fc47e2829d44dd2032436029915d83fc57af4b0"
       }
+    },
+    {
+      "id": "release0201-bsn-default-lint",
+      "origin": "upstream",
+      "source": "334ea201fa60035915f4b7f21f00091d4600fc8a",
+      "status": "active",
+      "reason": "BSN default struct construction must not emit false needless_update diagnostics in generated code; do not relax crate-wide Clippy rules.",
+      "regression": "struct_default_construction in bevy_scene: upstream test failed Clippy twice before the macro fix.",
+      "files": {
+        "crates/bevy_scene/macros/src/bsn/codegen.rs": "70a265f074903a28c9ee10fb545b7e40ac6467e089349664d25b066678f60f7b",
+        "crates/bevy_scene/src/lib.rs": "d64e7d2e457820c201d465faa2a2542fa3fe9507426ccf42d693ef36bd207ee2"
+      },
+      "adaptation": "Apply the released patch unchanged on retained development base3a796854. Existing surrounding development code is preserved in: crates/bevy_scene/macros/src/bsn/codegen.rs, crates/bevy_scene/src/lib.rs. Exact patch IDs are checked separately."
+    },
+    {
+      "id": "release0201-fog-near-plane",
+      "origin": "upstream",
+      "source": "1c1a02a9316f7844ac003bdb587c1d447c7dc13a",
+      "status": "active",
+      "reason": "Fog volumes that reach the near plane must keep their ray interval for perspective and orthographic cameras.",
+      "regression": "orthographic_camera_outside_rotated_fog_volume from upstream; package tests and WESL validation. No Teratorn fog/phone rendering claim.",
+      "files": {
+        "crates/bevy_pbr/src/volumetric_fog/render.rs": "ed6cc029538cfa55ddf0224010dc123305ec1a2853736e24b556dc5cdbf92f2c",
+        "crates/bevy_pbr/src/volumetric_fog/volumetric_fog.wesl": "8f90dc6dbf91a2185da9c38ce9aecebada8a1852000442ecfbdacbd1d4f9b227"
+      },
+      "adaptation": "Apply the released patch unchanged on retained development base3a796854. Existing surrounding development code is preserved in: crates/bevy_pbr/src/volumetric_fog/volumetric_fog.wesl. Exact patch IDs are checked separately."
     }
   ]
 }
